@@ -1,0 +1,39 @@
+# IDE
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+.gradle/
+!gradle-wrapper.jar
+
+# Local configuration file
+/local.properties
+
+# Android Studio
+captures/
+.externalNativeBuild/
+
+# Node Modules (untuk React Native atau proyek hybrid)
+node_modules/
+
+# Log Files
+*.log
+
+# Build Output
+app/build/
+build/
+
+# Keystore Files
+*.jks
+*.keystore
+
+# Crashlytics and Fabric
+com_crashlytics_build_id.xml
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+*.swp
+

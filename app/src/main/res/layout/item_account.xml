@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Account Name -->
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Account Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageEdit"
+            app:layout_constraintHorizontal_bias="0" />
+
+        <TextView
+            android:id="@+id/textViewAccountType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Account Type"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/teal_700"
+            app:layout_constraintTop_toBottomOf="@id/textViewName"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Balance -->
+        <TextView
+            android:id="@+id/textViewBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$1000.00"
+            android:textSize="14sp"
+            android:textColor="@color/teal_700"
+            app:layout_constraintTop_toBottomOf="@id/textViewAccountType"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Created Date -->
+        <TextView
+            android:id="@+id/textViewCreatedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Created: 01 Jan 2025"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@id/textViewBalance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Edit Icon -->
+        <ImageView
+            android:id="@+id/imageEdit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:padding="4dp"
+            android:contentDescription="Edit"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Delete Icon -->
+        <ImageView
+            android:id="@+id/imageDelete"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:padding="4dp"
+            android:contentDescription="Delete"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toStartOf="@id/imageEdit"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

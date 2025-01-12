@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add New Journal"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <!-- Input Description -->
+    <EditText
+        android:id="@+id/inputDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:inputType="text"
+        android:padding="8dp" />
+
+    <!-- Input Total Debit -->
+    <EditText
+        android:id="@+id/inputTotalDebit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Total Debit"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Input Total Credit -->
+    <EditText
+        android:id="@+id/inputTotalCredit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Total Credit"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Input Date -->
+    <EditText
+        android:id="@+id/inputDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date (yyyy-MM-dd)"
+        android:inputType="date"
+        android:padding="8dp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/navigation_account">
+
+    <fragment
+        android:id="@+id/navigation_account"
+        android:name="com.babsnet.accounting.ui.Account.AccountFragment"
+        android:label="Account" >
+        <action
+            android:id="@+id/action_to_accountInputFragment"
+            app:destination="@id/accountInputFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_journal"
+        android:name="com.babsnet.accounting.ui.journal.JournalFragment"
+        android:label="Journal">
+        <action
+            android:id="@+id/action_journal_to_add_edit_journal"
+            app:destination="@id/addEditJournalFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="com.babsnet.accounting.ui.notifications.NotificationsFragment"
+        android:label="Notifications" >
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditJournalFragment"
+        android:name="com.babsnet.accounting.ui.journal.AddEditJournalFragment"
+        android:label="Add/Edit Journal">
+        <argument
+            android:name="journalId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountInputFragment"
+        android:name="com.babsnet.accounting.ui.Account.AccountInputFragment"
+        android:label="Account Input">
+        <argument
+            android:name="accountId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+
+</navigation>
