@@ -73,6 +73,18 @@ class AccountInputFragment : Fragment() {
     }
 
     private fun setupUI() {
+
+        binding.editTextBalance.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.editTextBalance.text.toString() == "0.0") {
+                binding.editTextBalance.setText("")
+            } else if (!hasFocus && binding.editTextBalance.text.isNullOrBlank()) {
+                binding.editTextBalance.setText("0.0")
+            }
+        }
+
+        binding.btnBack.setOnClickListener {
+            findNavController().navigateUp() // Navigasi ke fragment sebelumnya
+        }
         // Populate spinner
         val accountTypes = resources.getStringArray(R.array.account_types)
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, accountTypes)

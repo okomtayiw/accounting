@@ -21,10 +21,15 @@
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="8dp"
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/BottomNavigationStyle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
