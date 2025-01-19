@@ -22,9 +22,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.babsnet.accounting.ui.notifications.NotificationsFragment"
-        android:label="Notifications" >
+        android:id="@+id/navigation_transactions"
+        android:name="com.babsnet.accounting.ui.transactions.TransactionsFragment"
+        android:label="Transactions" >
 
     </fragment>
 

@@ -3,6 +3,7 @@ package com.babsnet.accounting.data.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.babsnet.accounting.data.entity.Account
@@ -29,6 +30,13 @@ interface AccountDao {
 
     @Query("SELECT * FROM account WHERE account_type = :accountType ORDER BY accountId DESC")
     fun getAccountsByTypeDesc(accountType: String): Flow<List<Account>>
+
+
+    @Query("SELECT COUNT(*) FROM account")
+    suspend fun countAccounts(): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(accounts: List<Account>)
 
 
 }

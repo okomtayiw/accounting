@@ -6,6 +6,7 @@ import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.data.entity.JournalWithDetails
 import com.babsnet.accounting.data.entity.Ledger
+import com.babsnet.accounting.data.entity.TransactionData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -125,5 +126,9 @@ class JournalRepository(
             ledgerDao.updateLedger(existingLedger)
         }
         return existJournal
+    }
+
+    fun getAllTransactions(): Flow<List<TransactionData>> {
+        return ledgerDao.getAllTransactions()
     }
 }

@@ -1,0 +1,69 @@
+[
+  {
+    "accountId": 1,
+    "accountName": "Kas (Cash)",
+    "accountType": "Assets",
+    "description": "Uang tunai yang dimiliki"
+  },
+  {
+    "accountId": 2,
+    "accountName": "Bank",
+    "accountType": "Assets",
+    "description": "Uang yang tersimpan di rekening bank"
+  },
+
+  {
+    "accountId": 3,
+    "accountName": "Belanja Harian (Daily Expenses)",
+    "accountType": "Expenses",
+    "description": "Pengeluaran kecil seperti makanan & transportasi"
+  },
+  {
+    "accountId": 4,
+    "accountName": "Sewa (Rent Expense)",
+    "accountType": "Expenses",
+    "description": "Biaya sewa tempat tinggal atau kantor"
+  },
+  {
+    "accountId": 5,
+    "accountName": "Tagihan Listrik (Electricity Bill)",
+    "accountType": "Expenses",
+    "description": "Pengeluaran untuk listrik"
+  },
+  {
+    "accountId": 6,
+    "accountName": "Tagihan Air (Water Bill)",
+    "accountType": "Expenses",
+    "description": "Biaya bulanan untuk air"
+  },
+  {
+    "accountId": 7,
+    "accountName": "Biaya Internet & Telepon",
+    "accountType": "Expenses",
+    "description": "Pembayaran internet & telepon"
+  },
+  {
+    "accountId": 8,
+    "accountName": "Asuransi (Insurance Expense)",
+    "accountType": "Expenses",
+    "description": "Premi asuransi kesehatan, kendaraan, dll."
+  },
+  {
+    "accountId": 9,
+    "accountName": "Cicilan Kendaraan (Car Loan Payment)",
+    "accountType": "Expenses",
+    "description": "Pembayaran angsuran mobil/motor"
+  },
+  {
+    "accountId": 10,
+    "accountName": "Hiburan (Entertainment Expense)",
+    "accountType": "Expenses",
+    "description": "Pengeluaran untuk film, game, dll."
+  },
+  {
+    "accountId": 11,
+    "accountName": "Pendidikan (Education Expense)",
+    "accountType": "Expenses",
+    "description": "Biaya sekolah, kursus, atau buku"
+  }
+]
