@@ -14,18 +14,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
-import com.babsnet.accounting.adapter.JournalListAdapter
+import com.babsnet.accounting.adapter.JournalWithDetailsAdapter
 import com.babsnet.accounting.data.AppDatabase
-import com.babsnet.accounting.data.entity.Journal
 import com.babsnet.accounting.data.dao.JournalDao
+import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.databinding.FragmentJournalBinding
 import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.viewModel.JournalViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.Date
 
 
 class JournalFragment : Fragment() {
@@ -34,7 +30,7 @@ class JournalFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var journalViewModel: JournalViewModel
-    private lateinit var journalListAdapter: JournalListAdapter
+    private lateinit var journalWithDetailsAdapter: JournalWithDetailsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,8 +61,9 @@ class JournalFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         // Setup database, DAO, and repository
-        val dao: JournalDao = AppDatabase.getDatabase(requireContext()).journalDao()
-        val repository = JournalRepository(dao)
+        val journalDao : JournalDao = AppDatabase.getDatabase(requireContext()).journalDao()
+        val ledgerDao: LedgerDao = AppDatabase.getDatabase(requireContext()).ledgerDao()
+        val repository = JournalRepository(journalDao, ledgerDao)
 
         // Setup ViewModel with factory
         val journalViewModelFactory = GenericViewModelFactory(
@@ -77,56 +74,44 @@ class JournalFragment : Fragment() {
 
         // insertMockData()
         // Setup RecyclerView
-        journalListAdapter = JournalListAdapter(
-            onDeleteJournal = { journal ->
+        journalWithDetailsAdapter = JournalWithDetailsAdapter(
+            onDeleteJournal = { journalDetail ->
                 // Handle delete logic
-                journalViewModel.delete(journal)
+                journalViewModel.delete(journalDetail.journal)
             },
-            onEditJournal = { journal ->
+            onEditJournal = { journalDetail ->
                 // Navigate to AddEditJournalFragment with the journal ID
                 val bundle = Bundle().apply {
-                    putInt("journalId", journal.journalId)
+                    putInt("journalId", journalDetail.journal.journalId)
                 }
                 findNavController().navigate(R.id.action_journal_to_add_edit_journal, bundle)
             }
         )
         binding.recyclerViewJournal.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewJournal.adapter = journalListAdapter
+        binding.recyclerViewJournal.adapter = journalWithDetailsAdapter
 
         // Observe data and submit to adapter
-        journalViewModel.allJournals.observe(viewLifecycleOwner) { journals ->
-            journalListAdapter.submitList(journals)
+        journalViewModel.allJournalsWithDetails.observe(viewLifecycleOwner) { journalWithDetailsList ->
+            // Update RecyclerView adapter here
+            journalWithDetailsAdapter.submitList(journalWithDetailsList)
+            showEmptyState(journalWithDetailsList.isEmpty())
+
+        }
+
+        binding.fabAddAccountJournal.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.addEditJournalFragment)
         }
 
         return root
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun insertMockData() {
-        val mockJournals = listOf(
-            Journal().apply {
-                date = Date(2024 - 1900, 11, 20)
-                description = "Initial Debit Transaction"
-                createdAt = Date()
-            },
-            Journal().apply {
-                date = Date(2024 - 1900, 11, 21)
-                description = "Initial Credit Transaction"
-                createdAt = Date()
-            },
-            Journal().apply {
-                date = Date(2024 - 1900, 11, 22)
-                description = "Balanced Transaction"
-                createdAt = Date()
-            }
-        )
-
-        GlobalScope.launch {
-            mockJournals.forEach { journal ->
-                journalViewModel.insert(journal)
-            }
-        }
+    private fun showEmptyState(isEmpty: Boolean) {
+        binding.tvNoData.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.recyclerViewJournal.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
+
+
 
 
     override fun onDestroyView() {

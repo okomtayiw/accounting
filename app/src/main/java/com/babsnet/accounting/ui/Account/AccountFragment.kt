@@ -13,6 +13,7 @@ import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.AccountAdapter
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.dao.AccountDao
+import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.databinding.FragmentAccountBinding
 import com.babsnet.accounting.repository.AccountRepository
 import com.babsnet.accounting.utils.GenericViewModelFactory
@@ -57,8 +58,13 @@ class AccountFragment : Fragment() {
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(2000)
                     // Delete the account
-                    accountViewModel.delete(account) // Delete from ViewModel
-                    Toast.makeText(requireContext(), "Account deleted: ${account.accountName}", Toast.LENGTH_SHORT).show()
+                    val ledgers = accountViewModel.checkLedgerByAccountId(account)
+                    if(ledgers.isNotEmpty()) {
+                        Toast.makeText(requireContext(), "The account cannot be deleted because it is already used for transaction data", Toast.LENGTH_SHORT).show()
+                    } else {
+                        accountViewModel.delete(account) // Delete from ViewModel
+                        Toast.makeText(requireContext(), "Account deleted: ${account.accountName}", Toast.LENGTH_SHORT).show()
+                    }
                     Utils.hideLoading(binding.progressBar)
                 }
 
@@ -70,6 +76,7 @@ class AccountFragment : Fragment() {
         // Observe data from ViewModel
         accountViewModel.allAccount.observe(viewLifecycleOwner) { accounts ->
             adapter.updateData(accounts) // Update RecyclerView data
+            showEmptyState(accounts.isEmpty())
         }
         // Handle Floating Action Button click
         binding.fabAddAccount.setOnClickListener {
@@ -87,7 +94,8 @@ class AccountFragment : Fragment() {
 
     private fun setupRepository(): AccountRepository {
         val dao: AccountDao = AppDatabase.getDatabase(requireContext()).accountDao()
-        return AccountRepository(dao)
+        val ledgerDao: LedgerDao = AppDatabase.getDatabase(requireContext()).ledgerDao()
+        return AccountRepository(dao, ledgerDao)
     }
 
     private fun setupViewModel(repository: AccountRepository): AccountViewModel {
@@ -95,6 +103,11 @@ class AccountFragment : Fragment() {
             AccountViewModel::class.java
         ) { AccountViewModel(repository) }
         return ViewModelProvider(this, accountViewModelFactory)[AccountViewModel::class.java]
+    }
+
+    private fun showEmptyState(isEmpty: Boolean) {
+        binding.tvNoData.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.recyclerViewAccount.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     override fun onDestroyView() {

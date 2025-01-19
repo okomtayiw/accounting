@@ -12,7 +12,7 @@ data class Journal(
     var journalId: Int = 0,
 
     @ColumnInfo(name = "date")
-    var date: java.util.Date? = null,
+    var date: Date? = null,
 
     @ColumnInfo(name = "description")
     var description: String? = null,

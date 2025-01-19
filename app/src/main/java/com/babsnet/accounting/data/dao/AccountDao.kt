@@ -27,4 +27,8 @@ interface AccountDao {
     suspend fun update(account: Account)
 
 
+    @Query("SELECT * FROM account WHERE account_type = :accountType ORDER BY accountId DESC")
+    fun getAccountsByTypeDesc(accountType: String): Flow<List<Account>>
+
+
 }

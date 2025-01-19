@@ -27,6 +27,11 @@ object DateUtil {
         }
     }
 
+    fun formatDateFromDateObject(date: Date): String {
+        val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        return outputFormat.format(date)
+    }
+
     /**
      * Converts a string to a Date object.
      * @param dateString The string to be converted, e.g., "2024-12-22".

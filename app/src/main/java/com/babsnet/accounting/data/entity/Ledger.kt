@@ -37,13 +37,13 @@ data class Ledger(
     var journalId: Int,
 
     @ColumnInfo(name = "account_id")
-    var accountId: Int,
+    var accountId: Int?,
 
     @ColumnInfo(name = "debit")
-    var debit: Double = 0.0,
+    var debit: Double? = 0.0,
 
     @ColumnInfo(name = "credit")
-    var credit: Double = 0.0,
+    var credit: Double? = 0.0,
 
     @ColumnInfo(name = "created_at")
     var createdAt: Date,

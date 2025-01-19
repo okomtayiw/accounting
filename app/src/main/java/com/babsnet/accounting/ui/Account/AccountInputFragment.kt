@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.AppDatabase
+import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.databinding.FragmentAccountInputBinding
 import com.babsnet.accounting.repository.AccountRepository
@@ -40,7 +41,8 @@ class AccountInputFragment : Fragment() {
 
         // Initialize ViewModel
         val dao = AppDatabase.getDatabase(requireContext()).accountDao()
-        val repository = AccountRepository(dao)
+        val ledgerDao: LedgerDao = AppDatabase.getDatabase(requireContext()).ledgerDao()
+        val repository = AccountRepository(dao, ledgerDao)
         val factory = GenericViewModelFactory(AccountViewModel::class.java) {
             AccountViewModel(repository)
         }
@@ -88,7 +90,7 @@ class AccountInputFragment : Fragment() {
         // Populate spinner
         val accountTypes = resources.getStringArray(R.array.account_types)
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, accountTypes)
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item)
         binding.spinnerAccountType.adapter = spinnerAdapter
 
         // Set default value for Balance

@@ -98,11 +98,11 @@
                 android:orientation="horizontal"
                 android:paddingBottom="8dp">
                 <TextView
-                    android:id="@+id/labelTotalDebit"
+                    android:id="@+id/labelAccountNameOne"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Total Debit"
+                    android:text="Account name"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="#000000" />
@@ -115,11 +115,11 @@
                     android:textSize="14sp"
                     android:textColor="#000000" />
                 <TextView
-                    android:id="@+id/textTotalDebit"
+                    android:id="@+id/textAccountNameOne"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="4000.0"
+                    android:text="Account name "
                     android:textSize="14sp"
                     android:textColor="#000000" />
             </LinearLayout>
@@ -131,11 +131,11 @@
                 android:orientation="horizontal"
                 android:paddingBottom="8dp">
                 <TextView
-                    android:id="@+id/labelTotalCredit"
+                    android:id="@+id/labelAccountNameTwo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Total Credit"
+                    android:text="Account name"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="#000000" />
@@ -148,11 +148,11 @@
                     android:textSize="14sp"
                     android:textColor="#000000" />
                 <TextView
-                    android:id="@+id/textTotalCredit"
+                    android:id="@+id/textAccountNameTwo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="4000.0"
+                    android:text="Account name"
                     android:textSize="14sp"
                     android:textColor="#000000" />
             </LinearLayout>

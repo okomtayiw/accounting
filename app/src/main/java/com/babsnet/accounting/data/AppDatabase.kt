@@ -11,8 +11,12 @@ import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.Journal
 import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.data.entity.Ledger
+import com.babsnet.accounting.data.entity.LedgerWithAccount
 
-@Database(entities = [Journal::class, Account::class, Ledger::class], version = 4)
+@Database(entities = [Journal::class, Account::class, Ledger::class],
+    views = [LedgerWithAccount::class],
+    version = 6,
+    exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun journalDao(): JournalDao
