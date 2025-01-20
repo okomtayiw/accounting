@@ -69,6 +69,10 @@ dependencies {
     implementation libs.androidx.navigation.ui.ktx.v260
     implementation libs.material
 
+    implementation libs.androidx.drawerlayout
+    implementation libs.google.material.v1100
+
+
     // Vector drawable support
     implementation libs.androidx.vectordrawable
 

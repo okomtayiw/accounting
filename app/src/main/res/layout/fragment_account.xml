@@ -19,12 +19,10 @@
 
         <!-- Tombol kembali -->
         <ImageView
-            android:id="@+id/btn_back"
+            android:id="@+id/btn_menu"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:visibility="gone"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back Button"
+            android:src="@drawable/ic_menu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -38,7 +36,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            app:layout_constraintStart_toEndOf="@id/btn_back"
+            app:layout_constraintStart_toEndOf="@id/btn_menu"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

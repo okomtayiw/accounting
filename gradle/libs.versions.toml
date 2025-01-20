@@ -1,6 +1,8 @@
 [versions]
 agp = "8.7.3"
 core = "1.47.0"
+drawerlayout = "1.2.0"
+googleMaterial = "1.10.0"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -25,12 +27,14 @@ supportAnnotations = "28.0.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 #noinspection SimilarGradleDependency
+androidx-drawerlayout = { module = "androidx.drawerlayout:drawerlayout", version.ref = "drawerlayout" }
 androidx-navigation-fragment-ktx-v260 = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtxVersion" }
 #noinspection SimilarGradleDependency
 androidx-navigation-ui-ktx-v260 = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
 #noinspection SimilarGradleDependency
 androidx-room-ktx-v252 = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 core = { module = "com.google.ar:core", version.ref = "core" }
+google-material-v1100 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

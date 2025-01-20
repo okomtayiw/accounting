@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -42,6 +44,10 @@ class AccountFragment : Fragment() {
         // Setup repository and ViewModel
         val repository = setupRepository()
         accountViewModel = setupViewModel(repository)
+        val drawerLayout = activity?.findViewById<DrawerLayout>(R.id.drawer_layout)
+        binding.btnMenu.setOnClickListener {
+            drawerLayout?.openDrawer(GravityCompat.START)
+        }
 
         // Setup RecyclerView
         val adapter = AccountAdapter(

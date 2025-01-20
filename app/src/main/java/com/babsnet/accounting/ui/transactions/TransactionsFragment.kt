@@ -11,10 +11,8 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.babsnet.accounting.databinding.FragmentTransactionsBinding
 import com.babsnet.accounting.data.entity.TransactionData
-import kotlinx.coroutines.launch
 import android.view.Gravity
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.dao.JournalDao
@@ -68,7 +66,6 @@ class TransactionsFragment : Fragment() {
 
     @SuppressLint("DefaultLocale")
     private fun populateTransactionTable(transactions: List<TransactionData>) {
-        // Hapus semua baris data lama kecuali header (index 0)
         tableLayout.removeViews(1, tableLayout.childCount - 1)
         var totalDebit = 0.0
         var totalCredit = 0.0
