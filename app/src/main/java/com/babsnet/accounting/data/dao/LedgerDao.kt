@@ -44,5 +44,38 @@ interface LedgerDao {
     """)
     fun getAllTransactions(): Flow<List<TransactionData>>
 
+    @Query("""
+    SELECT 
+        l.ledger_id AS ledgerId,
+        j.date AS journalDate, 
+        a.account_type AS accountType, 
+        a.account_name AS accountName, 
+        j.description AS description, 
+        l.debit AS debit, 
+        l.credit AS credit
+    FROM ledger l
+    INNER JOIN account a ON l.account_id = a.accountId
+    INNER JOIN journal j ON l.journal_id = j.journalId
+    WHERE journalDate BETWEEN :startDate AND :endDate
+    ORDER BY journalDate DESC
+    """)
+    fun getTransactionsBetweenDates(startDate: Long, endDate: Long): Flow<List<TransactionData>>
 
+    @Query("""
+    SELECT 
+        l.ledger_id AS ledgerId,
+        j.date AS journalDate, 
+        a.account_type AS accountType, 
+        a.account_name AS accountName, 
+        j.description AS description, 
+        l.debit AS debit, 
+        l.credit AS credit
+    FROM ledger l
+    INNER JOIN account a ON l.account_id = a.accountId
+    INNER JOIN journal j ON l.journal_id = j.journalId
+    WHERE journalDate BETWEEN :startDate AND :endDate
+    AND a.accountId = :accountId
+    ORDER BY journalDate DESC
+    """)
+    fun getTransactionsBetweenDatesWitAccountId(startDate: Long, endDate: Long, accountId:Int): Flow<List<TransactionData>>
 }

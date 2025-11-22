@@ -1,7 +1,9 @@
 package com.babsnet.accounting.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -9,6 +11,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.Account
+import com.babsnet.accounting.data.entity.JournalWithDetails
+import com.babsnet.accounting.utils.DateUtil
 import com.babsnet.accounting.utils.Utils
 
 class AccountAdapter(
@@ -22,22 +26,51 @@ class AccountAdapter(
         private val nameTextView: TextView = view.findViewById(R.id.textViewName)
         private val nameTextAccountType: TextView = view.findViewById(R.id.textViewAccountType)
         private val balanceTextView: TextView = view.findViewById(R.id.textViewBalance)
-        private val deleteImageView: ImageView = view.findViewById(R.id.imageDelete)
+        private val textViewCreatedDate:TextView = view.findViewById(R.id.textViewCreatedDate)
+        private val openMenu: ImageView = view.findViewById(R.id.arrowIcon)
 
         @SuppressLint("SetTextI18n")
         fun bind(account: Account) {
             nameTextView.text = account.accountName
             nameTextAccountType.text = account.accountType
-            balanceTextView.text = "$${account.balance}"
+            if(account.createdAt.toString().isEmpty() || account.createdAt == null) {
+                textViewCreatedDate.text = ""
+            } else {
+                textViewCreatedDate.text = DateUtil.dateToString(account.createdAt!!)
+            }
+
             itemView.setOnClickListener { onEditClick(account) }
 
-            deleteImageView.setOnClickListener {
-                Utils.showDeleteConfirmationDialog(itemView.context){
-                    onDeleteClick(account) }
-                }
+            openMenu.setOnClickListener {
+                showPopupMenu(it, itemView.context, account)
+            }
 
         }
 
+    }
+
+    private fun showPopupMenu(
+        view: View,
+        context: Context,
+        account: Account
+    ) {
+        val popup = android.widget.PopupMenu(context, view)
+        popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+
+        popup.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.menu_edit -> {
+                    onEditClick(account)
+                    true
+                }
+                R.id.menu_delete -> {
+                    onDeleteClick(account)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {

@@ -30,6 +30,39 @@ class JournalRepository(
         }
     }
 
+    fun getAllJournalsWeekly(startDate: Long, endDate: Long): Flow<List<JournalWithDetails>> {
+        return journalDao.getJournalsWithinDateRange(startDate, endDate).map { journals ->
+            journals.map { journal ->
+                val ledgers = runBlocking {
+                    journalDao.getLedgersWithAccountByJournalId(journal.journalId)
+                }
+                JournalWithDetails(journal, ledgers)
+            }
+        }
+    }
+
+    fun getAllJournalsMonthly(year: Long, month: Long): Flow<List<JournalWithDetails>> {
+        return journalDao.getJournalsWithMonthly(year, month).map { journals ->
+            journals.map { journal ->
+                val ledgers = runBlocking {
+                    journalDao.getLedgersWithAccountByJournalId(journal.journalId)
+                }
+                JournalWithDetails(journal, ledgers)
+            }
+        }
+    }
+
+    fun getAllJournalsYearly(starDateYear: Long, endDateYear: Long): Flow<List<JournalWithDetails>> {
+        return journalDao.getJournalsWithinYear(starDateYear, endDateYear).map { journals ->
+            journals.map { journal ->
+                val ledgers = runBlocking {
+                    journalDao.getLedgersWithAccountByJournalId(journal.journalId)
+                }
+                JournalWithDetails(journal, ledgers)
+            }
+        }
+    }
+
     fun getJournalByIdWithDetails(journalId: Int): Flow<JournalWithDetails?> {
         return journalDao.getJournalById(journalId).map { journal ->
             if (journal != null) {
@@ -130,5 +163,13 @@ class JournalRepository(
 
     fun getAllTransactions(): Flow<List<TransactionData>> {
         return ledgerDao.getAllTransactions()
+    }
+
+    fun getTransactionsByAccount(startDate: Long, endDate: Long, accountId: Int?): Flow<List<TransactionData>> {
+        return if (accountId == null || accountId == 0 || accountId == -1) {
+            ledgerDao.getTransactionsBetweenDates(startDate, endDate)
+        } else {
+            ledgerDao.getTransactionsBetweenDatesWitAccountId(startDate, endDate, accountId)
+        }
     }
 }

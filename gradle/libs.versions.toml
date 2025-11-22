@@ -2,7 +2,10 @@
 agp = "8.7.3"
 core = "1.47.0"
 drawerlayout = "1.2.0"
-googleMaterial = "1.10.0"
+googleMaterial = "1.12.0"
+googleMaterialVersion = "1.12.0"
+itext7Core = "7.1.15"
+jxl = "2.6.12"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -12,17 +15,19 @@ appcompat = "1.7.0"
 material = "1.12.0"
 constraintlayout = "2.2.0"
 materialVersion = "1.12.0"
-navigationFragmentKtxVersion = "2.8.5"
-navigationUiKtxVersion = "2.8.5"
+navigationFragmentKtxVersion = "2.8.6"
+navigationUiKtxVersion = "2.8.6"
 roomKtx = "2.6.1"
 vectordrawable = "1.2.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
-navigationFragmentKtx = "2.8.5"
-navigationUiKtx = "2.8.5"
+navigationFragmentKtx = "2.8.6"
+navigationUiKtx = "2.8.6"
 sqlite = "2.6.1"
 room = "2.6.1"
 supportAnnotations = "28.0.0"
+annotation = "1.9.1"
+viewpager2 = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,13 +38,16 @@ androidx-navigation-fragment-ktx-v260 = { module = "androidx.navigation:navigati
 androidx-navigation-ui-ktx-v260 = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
 #noinspection SimilarGradleDependency
 androidx-room-ktx-v252 = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 core = { module = "com.google.ar:core", version.ref = "core" }
 google-material-v1100 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
+itext7-core = { module = "com.itextpdf:itext7-core", version.ref = "itext7Core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 #noinspection SimilarGradleDependency
+jxl = { module = "net.sourceforge.jexcelapi:jxl", version.ref = "jxl" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-vectordrawable = { group = "androidx.vectordrawable", name = "vectordrawable", version.ref = "vectordrawable" }
@@ -58,7 +66,9 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 #noinspection SimilarGradleDependency
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 #noinspection SimilarGradleDependency
+material-v130 = { module = "com.google.android.material:material", version.ref = "googleMaterialVersion" }
 support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

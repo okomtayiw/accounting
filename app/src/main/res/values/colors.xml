@@ -9,4 +9,18 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bottom_nav_active">#6200EE</color>
     <color name="bottom_nav_inactive">#9E9E9E</color>
+
+    <color name="surface_card">#FFFFFF</color>
+    <color name="window_bg">#F5F5F5</color>
+    <color name="text_primary">#000000</color>
+    <color name="text_secondary">#666666</color>
+    <color name="icon_primary">#333333</color>
+
+    <color name="colorBackground">#F5F5F5</color>
+    <color name="colorOnBackground">#000000</color>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="soft_surface">#F5F7FF</color>
+
+
 </resources>

@@ -5,15 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:windowBackground"
     android:fitsSystemWindows="true"
-    tools:context=".ui.Account.AccountInputFragment">
+    tools:context=".ui.account.AccountInputFragment">
 
     <!-- Custom Toolbar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/custom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="?attr/colorPrimary"
         android:padding="16dp"
         android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,7 +28,8 @@
             android:contentDescription="Back Button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="@color/white" />
 
         <!-- Judul -->
         <TextView
@@ -37,7 +39,7 @@
             android:text="Account"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="@color/white"
             app:layout_constraintStart_toEndOf="@id/btn_back"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -68,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#F5F7FF"
+                android:background="?attr/colorSurface"
                 android:padding="12dp"
                 android:elevation="2dp"
                 android:gravity="center_vertical">
@@ -85,21 +87,24 @@
                 <EditText
                     android:id="@+id/editTextAccountName"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:minHeight="?attr/listPreferredItemHeight"
                     android:hint="Account Name"
+                    android:textColorHint="?attr/colorOnSurface"
                     android:background="@android:color/transparent"
                     android:inputType="text"
                     android:textSize="16sp" />
             </LinearLayout>
 
             <!-- Account Type Spinner -->
+            <!-- Account Type Spinner -->
             <LinearLayout
                 android:id="@+id/layout_spinner_account_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#F5F7FF"
+                android:background="?attr/colorSurface"
                 android:padding="12dp"
                 android:elevation="2dp"
                 android:layout_marginTop="16dp"
@@ -109,29 +114,40 @@
                 <ImageView
                     android:id="@+id/icon_spinner"
                     android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_height="match_parent"
                     android:src="@drawable/ic_category"
-                    android:contentDescription="Spinner Icon"
                     android:layout_marginEnd="8dp" />
 
-                <Spinner
-                    android:id="@+id/spinnerAccountType"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/autoCompleteTypeAccountLayout"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:padding="8dp"
-                    android:dropDownWidth="match_parent"
-                    android:spinnerMode="dropdown" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:hint="Account Type"
+                    app:endIconMode="dropdown_menu"
+                    app:boxBackgroundMode="filled"
+                    app:boxBackgroundColor="?attr/colorSurface"
+                    app:boxStrokeWidth="0dp">
 
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteTypeAccount"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textColorHint="?attr/colorOnSurface"
+                        android:inputType="none"
+                        android:textSize="16sp"
+                        android:focusable="true"
+                        android:clickable="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
             <!-- Balance -->
             <LinearLayout
                 android:id="@+id/layout_balance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#F5F7FF"
+                android:background="?attr/colorSurface"
                 android:padding="12dp"
                 android:elevation="2dp"
                 android:layout_marginTop="16dp"
@@ -149,11 +165,14 @@
                 <EditText
                     android:id="@+id/editTextBalance"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Enter balance"
+                    android:layout_height="match_parent"
+                    android:minHeight="?attr/listPreferredItemHeight"
+                    android:hint="Account balance"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="?attr/colorOnSurface"
                     android:background="@android:color/transparent"
-                    android:inputType="numberDecimal"
+                    android:inputType="number"
                     android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
@@ -170,6 +189,8 @@
         android:layout_marginEnd="16dp"
         android:padding="16dp"
         android:text="Save"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

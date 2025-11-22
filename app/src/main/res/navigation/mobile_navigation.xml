@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/navigation_account">
+    app:startDestination="@id/nav_login_fragment">
 
     <fragment
-        android:id="@+id/navigation_account"
-        android:name="com.babsnet.accounting.ui.Account.AccountFragment"
+        android:id="@+id/nav_login_fragment"
+        android:name="com.babsnet.accounting.ui.login.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_loginFragment_to_home"
+            app:destination="@id/navigation_journal" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.babsnet.accounting.ui.account.AccountFragment"
         android:label="Account" >
         <action
             android:id="@+id/action_to_accountInputFragment"
@@ -41,7 +51,7 @@
 
     <fragment
         android:id="@+id/accountInputFragment"
-        android:name="com.babsnet.accounting.ui.Account.AccountInputFragment"
+        android:name="com.babsnet.accounting.ui.account.AccountInputFragment"
         android:label="Account Input">
         <argument
             android:name="accountId"

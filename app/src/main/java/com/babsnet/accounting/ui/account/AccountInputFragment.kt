@@ -1,6 +1,8 @@
-package com.babsnet.accounting.ui.Account
+package com.babsnet.accounting.ui.account
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -23,6 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.util.Date
 
 class AccountInputFragment : Fragment() {
 
@@ -53,6 +57,7 @@ class AccountInputFragment : Fragment() {
 
         // Setup UI
         setupUI()
+        requireActivity().findViewById<View>(R.id.nav_view)?.visibility = View.GONE
         return root
     }
 
@@ -77,10 +82,10 @@ class AccountInputFragment : Fragment() {
     private fun setupUI() {
 
         binding.editTextBalance.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.editTextBalance.text.toString() == "0.0") {
+            if (hasFocus && binding.editTextBalance.text.toString() == "") {
                 binding.editTextBalance.setText("")
             } else if (!hasFocus && binding.editTextBalance.text.isNullOrBlank()) {
-                binding.editTextBalance.setText("0.0")
+                binding.editTextBalance.setText("")
             }
         }
 
@@ -89,21 +94,45 @@ class AccountInputFragment : Fragment() {
         }
         // Populate spinner
         val accountTypes = resources.getStringArray(R.array.account_types)
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, accountTypes)
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item)
-        binding.spinnerAccountType.adapter = spinnerAdapter
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, accountTypes)
+
+        binding.autoCompleteTypeAccount.setAdapter(adapter)
+        binding.autoCompleteTypeAccount.setOnItemClickListener { _, _, _, _ ->
+            binding.autoCompleteTypeAccountLayout.hint = null
+        }
+
+        binding.autoCompleteTypeAccount.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (s.isNullOrEmpty()) {
+                    binding.autoCompleteTypeAccountLayout.hint = "Account Type"
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
         // Set default value for Balance
-        binding.editTextBalance.setText("0.0") // Set default value here
+        binding.editTextBalance.setText("") // Set default value here
 
         // Check if editing an account
         val accountId = arguments?.getInt("accountId")
         if (accountId != null && accountId != -1) { // Ensure valid accountId
+            binding.autoCompleteTypeAccountLayout.hint = null
             accountViewModel.getAccountById(accountId).observe(viewLifecycleOwner) { account ->
                 currentAccount = account
-                binding.editTextAccountName.setText(account?.accountName ?: "")
-                binding.editTextBalance.setText(account?.balance?.toString() ?: "0.0")
-                binding.spinnerAccountType.setSelection(accountTypes.indexOf(account?.accountType ?: ""))
+                if (account?.accountName != null) {
+                    binding.editTextAccountName.setText(account.accountName)
+                } else {
+                    binding.editTextAccountName.setText("")
+                }
+
+                if (account?.balance != null && account.balance != 0.0) {
+                    binding.editTextBalance.setText(account.balance.toString())
+                } else {
+                    binding.editTextBalance.setText("");
+                }
+
+                binding.autoCompleteTypeAccount.setText(account?.accountType, false)
             }
         }
 
@@ -115,7 +144,7 @@ class AccountInputFragment : Fragment() {
 
     private fun saveAccount() {
         val name = binding.editTextAccountName.text.toString()
-        val type = binding.spinnerAccountType.selectedItem.toString()
+        val type = binding.autoCompleteTypeAccount.text.toString()
         val balance = binding.editTextBalance.text.toString().toDoubleOrNull() ?: 0.0
 
         // Validate account name
@@ -127,7 +156,7 @@ class AccountInputFragment : Fragment() {
         Utils.showLoading(binding.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
             delay(2000)
-
+            val now = Date()
             val account = currentAccount?.copy(
                 accountName = name,
                 accountType = type,
@@ -135,9 +164,11 @@ class AccountInputFragment : Fragment() {
             ) ?: Account(0, name, type, balance)
 
             if (currentAccount == null) {
+                account.createdAt = now
                 accountViewModel.insert(account)
                 Toast.makeText(requireContext(), "Account added successfully", Toast.LENGTH_SHORT).show()
             } else {
+                account.updatedAt = now
                 accountViewModel.update(account)
                 Toast.makeText(requireContext(), "Account updated successfully", Toast.LENGTH_SHORT).show()
             }
@@ -150,6 +181,7 @@ class AccountInputFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.nav_view)?.visibility = View.VISIBLE
         _binding = null
     }
 }

@@ -1,10 +1,15 @@
 package com.babsnet.accounting.utils
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.EditText
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.util.*
+import java.time.ZoneId
+
 
 object DateUtil {
 
@@ -89,7 +94,40 @@ object DateUtil {
             month,
             day
         )
-
         datePickerDialog.show()
+    }
+
+    @SuppressLint("NewApi")
+    fun getStartAndEndOfWeek(): Pair<Long, Long> {
+        val today = LocalDate.now()
+        val startOfWeek = today.with(DayOfWeek.MONDAY)
+        val endOfWeek = today.with(DayOfWeek.SUNDAY)
+
+        val startOfWeekMillis = startOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val endOfWeekMillis = endOfWeek.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        return Pair(startOfWeekMillis, endOfWeekMillis)
+    }
+
+    @SuppressLint("NewApi")
+    fun getStartAndEndOfMonth(year: Int, month: Int): Pair<Long, Long> {
+        val startOfMonth = LocalDate.of(year, month, 1)
+        val endOfMonth = startOfMonth.plusMonths(1).minusDays(1)
+
+        val startOfMonthMillis = startOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val endOfMonthMillis = endOfMonth.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        return Pair(startOfMonthMillis, endOfMonthMillis)
+    }
+
+    @SuppressLint("NewApi")
+    fun getStartAndEndOfYear(year: Int): Pair<Long, Long> {
+        val startOfYear = LocalDate.of(year, 1, 1)
+        val endOfYear = LocalDate.of(year, 12, 31)
+
+        val startOfYearMillis = startOfYear.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val endOfYearMillis = endOfYear.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+        return Pair(startOfYearMillis, endOfYearMillis)
     }
 }

@@ -1,17 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Theme.AccountingSystem" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+        <!-- Primary -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/purple_500</item>
-        <item name="colorSecondaryVariant">@color/purple_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimaryVariant</item>
 
-        <!-- Customize your theme here. -->
+        <!-- Secondary -->
+        <item name="colorSecondary">@color/purple_500</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Background -->
+        <item name="android:windowBackground">@color/window_bg</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorBackgroundFloating">@color/purple_700</item>
+
+
+        <!-- Surface -->
+        <item name="colorSurface">@color/soft_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="21">@color/purple_700</item>
+
+        <!-- Typography -->
+        <item name="fontFamily">@font/accounting_font</item>
     </style>
+
 </resources>

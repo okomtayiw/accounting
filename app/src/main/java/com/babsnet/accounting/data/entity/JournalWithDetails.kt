@@ -20,7 +20,7 @@ data class JournalWithDetails(
     value = """
         SELECT 
             ledger.ledger_id AS ledgerId,
-            ledger.journal_id AS journal_id, -- Sesuaikan nama kolom menjadi journal_id
+            ledger.journal_id AS journal_id, 
             ledger.account_id AS accountId,
             ledger.debit AS ledgerDebit,
             ledger.credit AS ledgerCredit,
@@ -30,6 +30,7 @@ data class JournalWithDetails(
             account.account_type AS accountType
         FROM ledger
         INNER JOIN account ON ledger.account_id = account.accountId
+        ORDER BY  account.created_at DESC;
     """
 )
 data class LedgerWithAccount(

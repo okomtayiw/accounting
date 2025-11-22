@@ -50,8 +50,37 @@ interface JournalDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLedger(ledger: Ledger)
 
-    @Query("SELECT * FROM journal")
+    @Transaction
+    @Query("""
+        SELECT * FROM journal
+        ORDER BY created_at DESC
+    """)
     fun getAllJournals(): Flow<List<Journal>>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM journal
+        WHERE date BETWEEN :startDate AND :endDate
+        ORDER BY created_at DESC
+    """)
+    fun getJournalsWithinDateRange(startDate: Long, endDate: Long): Flow<List<Journal>>
+
+    @Transaction
+    @Query("""
+    SELECT * FROM journal
+    WHERE date BETWEEN :year AND :month
+    ORDER BY created_at DESC
+    """)
+    fun getJournalsWithMonthly(year: Long, month: Long): Flow<List<Journal>>
+
+    @Transaction
+    @Query("""
+    SELECT * FROM journal
+    WHERE date BETWEEN :startDateYear AND :endDateYear
+    ORDER BY created_at DESC
+    """)
+    fun getJournalsWithinYear(startDateYear: Long, endDateYear: Long): Flow<List<Journal>>
+
 
     @Query("SELECT * FROM ledger_with_account WHERE journal_id = :journalId")
     suspend fun getLedgersWithAccountByJournalId(journalId: Int): List<LedgerWithAccount>

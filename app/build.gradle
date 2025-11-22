@@ -80,8 +80,20 @@ dependencies {
     implementation libs.androidx.room.ktx
     implementation libs.androidx.room.runtime
     implementation libs.support.annotations
+    implementation libs.androidx.annotation
     //noinspection KaptUsageInsteadOfKsp
     kapt libs.androidx.room.compiler
+
+    //convert pdf
+    implementation libs.itext7.core
+    //excel
+    implementation libs.jxl
+
+    implementation libs.androidx.viewpager2
+    implementation libs.material.v130
+
+
+
 
 
     implementation libs.androidx.room.ktx.v252

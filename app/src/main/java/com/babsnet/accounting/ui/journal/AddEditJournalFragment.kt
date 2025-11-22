@@ -24,6 +24,7 @@ import com.babsnet.accounting.utils.DateUtil
 import com.babsnet.accounting.utils.DateUtil.dateToString
 import com.babsnet.accounting.viewModel.JournalViewModel
 import com.babsnet.accounting.utils.GenericViewModelFactory
+import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.AccountViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
@@ -50,6 +51,7 @@ class AddEditJournalFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAddEditJournalBinding.inflate(inflater, container, false)
+        requireActivity().findViewById<View>(R.id.nav_view)?.visibility = View.GONE
         return binding.root
     }
 
@@ -87,8 +89,8 @@ class AddEditJournalFragment : Fragment() {
                     binding.accountNameOne.text = journalWithDetails.ledgers.getOrNull(0)?.accountName ?: ""
                     binding.accountNameTwo.text = journalWithDetails.ledgers.getOrNull(1)?.accountName ?: ""
 
-                    val total = journalWithDetails.ledgers.getOrNull(0)?.ledgerCredit?.takeIf { it > 0.0 }
-                        ?: journalWithDetails.ledgers.getOrNull(0)?.ledgerDebit ?: 0.0
+                    val total = (journalWithDetails.ledgers.getOrNull(0)?.ledgerCredit?.takeIf { it > 0.0 }
+                        ?: journalWithDetails.ledgers.getOrNull(0)?.ledgerDebit ?: 0.0).toLong()
 
                     binding.inputTotalAmount.text = Editable.Factory.getInstance().newEditable(total.toString())
                     accountIdOne = journalWithDetails.ledgers[0].accountId
@@ -115,14 +117,24 @@ class AddEditJournalFragment : Fragment() {
         }
 
         binding.accountNameOne.setOnClickListener {
-            showAccountSelectionDialog("Assets") { selectedAccount ->
+            Utils.showAccountSelectionDialog(
+                context = requireContext(),
+                lifecycleScope = viewLifecycleOwner.lifecycleScope,
+                accountViewModel = accountViewModel,
+                accountType = "Assets"
+            ) { selectedAccount ->
                 binding.accountNameOne.text = selectedAccount.accountName
                 accountIdOne = selectedAccount.accountId
             }
         }
 
         binding.accountNameTwo.setOnClickListener {
-            showAccountSelectionDialog("Expenses") { selectedAccount ->
+            Utils.showAccountSelectionDialog(
+                context = requireContext(),
+                lifecycleScope = viewLifecycleOwner.lifecycleScope,
+                accountViewModel = accountViewModel,
+                accountType = "Expenses"
+            ) { selectedAccount ->
                 binding.accountNameTwo.text = selectedAccount.accountName
                 accountIdTwo = selectedAccount.accountId
             }
@@ -142,7 +154,7 @@ class AddEditJournalFragment : Fragment() {
                 Toast.makeText(requireContext(), "All fields are required", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+            Utils.showLoading(binding.progressBar)
             lifecycleScope.launch {
                 try {
                     withContext(Dispatchers.IO) {
@@ -207,6 +219,7 @@ class AddEditJournalFragment : Fragment() {
                         Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
+                Utils.hideLoading(binding.progressBar)
             }
         }
     }
@@ -257,6 +270,7 @@ class AddEditJournalFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        requireActivity().findViewById<View>(R.id.nav_view)?.visibility = View.VISIBLE
         _binding = null
         viewLifecycleOwner.lifecycleScope.coroutineContext.cancelChildren()
     }

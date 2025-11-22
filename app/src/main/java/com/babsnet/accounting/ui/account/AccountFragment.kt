@@ -1,4 +1,4 @@
-package com.babsnet.accounting.ui.Account
+package com.babsnet.accounting.ui.account
 
 import android.os.Bundle
 import android.view.LayoutInflater

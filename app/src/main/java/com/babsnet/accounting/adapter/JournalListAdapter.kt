@@ -1,15 +1,18 @@
 package com.babsnet.accounting.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.JournalWithDetails
 import com.babsnet.accounting.databinding.ItemJournalBinding
 import com.babsnet.accounting.utils.DateUtil
-import com.babsnet.accounting.utils.Utils.showDeleteConfirmationDialog
 
 class JournalWithDetailsAdapter(
     private val onDeleteJournal: (JournalWithDetails) -> Unit,
@@ -61,19 +64,36 @@ class JournalWithDetailsAdapter(
 
             val context = binding.root.context
 
-            // Handle delete action
-            binding.btnDeleteJournal.setOnClickListener {
-                showDeleteConfirmationDialog(context) {
-                    onDeleteJournal(journalWithDetails)
-                }
-            }
-
-            // Handle edit action (item click or specific button click)
-            binding.btnEditJournal.setOnClickListener {
-                onEditJournal(journalWithDetails) // Trigger the onEditJournal callback
+            binding.menuButton.setOnClickListener {
+                showPopupMenu(it, context, journalWithDetails)
             }
         }
+
+        private fun showPopupMenu(
+            view: View,
+            context: Context,
+            journalWithDetails: JournalWithDetails
+        ) {
+            val popup = android.widget.PopupMenu(context, view)
+            popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+
+            popup.setOnMenuItemClickListener { item: MenuItem ->
+                when (item.itemId) {
+                    R.id.menu_edit -> {
+                        onEditJournal(journalWithDetails)
+                        true
+                    }
+                    R.id.menu_delete -> {
+                        onDeleteJournal(journalWithDetails)
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
+        }
     }
+
 
     class JournalWithDetailsComparator : DiffUtil.ItemCallback<JournalWithDetails>() {
         override fun areItemsTheSame(oldItem: JournalWithDetails, newItem: JournalWithDetails): Boolean {

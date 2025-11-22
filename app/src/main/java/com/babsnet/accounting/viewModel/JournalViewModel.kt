@@ -18,6 +18,18 @@ class JournalViewModel(private val repository: JournalRepository) : ViewModel() 
         emitSource(repository.getAllJournalsWithDetails().asLiveData())
     }
 
+    fun getJournalsForWeek(startDate: Long, endDate: Long): LiveData<List<JournalWithDetails>> {
+        return repository.getAllJournalsWeekly(startDate, endDate).asLiveData()
+    }
+
+    fun getJournalsForMonth(year: Long, month: Long): LiveData<List<JournalWithDetails>> {
+        return repository.getAllJournalsMonthly(year, month).asLiveData()
+    }
+
+    fun getJournalsForYear(startDateYear: Long, endDateYear: Long): LiveData<List<JournalWithDetails>> {
+        return repository.getAllJournalsYearly(startDateYear, endDateYear).asLiveData()
+    }
+
     fun getJournalWithDetails(journalId: Int): LiveData<JournalWithDetails?> {
         return repository.getJournalByIdWithDetails(journalId).asLiveData()
     }
