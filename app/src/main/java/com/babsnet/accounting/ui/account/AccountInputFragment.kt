@@ -1,5 +1,6 @@
 package com.babsnet.accounting.ui.account
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,17 +9,24 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.babsnet.accounting.R
+import com.babsnet.accounting.adapter.ColorAdapter
+import com.babsnet.accounting.adapter.IconAdapter
+import com.babsnet.accounting.adapter.IconItem
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.databinding.FragmentAccountInputBinding
 import com.babsnet.accounting.repository.AccountRepository
 import com.babsnet.accounting.utils.GenericViewModelFactory
+import com.babsnet.accounting.utils.GridSpacingItemDecoration
+import com.babsnet.accounting.utils.IconProvider
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.AccountViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +35,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Date
+import androidx.core.graphics.toColorInt
 
 class AccountInputFragment : Fragment() {
 
@@ -34,6 +43,12 @@ class AccountInputFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var accountViewModel: AccountViewModel
     private var currentAccount: Account? = null
+    lateinit var iconAdapter: IconAdapter
+    lateinit var colorAdapter: ColorAdapter
+    private lateinit var allIcons: List<IconItem>
+    private var selectedIcon: String = ""
+    private var selectedColor: Int? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,72 +95,64 @@ class AccountInputFragment : Fragment() {
     }
 
     private fun setupUI() {
+        setupColorAdapter()
 
-        binding.editTextBalance.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.editTextBalance.text.toString() == "") {
-                binding.editTextBalance.setText("")
-            } else if (!hasFocus && binding.editTextBalance.text.isNullOrBlank()) {
-                binding.editTextBalance.setText("")
-            }
+        allIcons = IconProvider.getIcons()
+        iconAdapter = IconAdapter(allIcons) { selected ->
+            selectedIcon = selected.key
+        }
+        binding.rvIcons.layoutManager = GridLayoutManager(requireContext(), 4)
+        binding.rvIcons.adapter = iconAdapter
+
+        val spacing = Utils.dpToPx(requireContext(), 8)
+        binding.rvIcons.addItemDecoration(GridSpacingItemDecoration(2, spacing))
+
+        binding.searchIcon.addTextChangedListener {
+            iconAdapter.filter(it.toString())
         }
 
-        binding.btnBack.setOnClickListener {
-            findNavController().navigateUp() // Navigasi ke fragment sebelumnya
-        }
-        // Populate spinner
         val accountTypes = resources.getStringArray(R.array.account_types)
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, accountTypes)
+        val spinnerAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            accountTypes
+        )
+        binding.autoCompleteTypeAccount.adapter = spinnerAdapter
 
-        binding.autoCompleteTypeAccount.setAdapter(adapter)
-        binding.autoCompleteTypeAccount.setOnItemClickListener { _, _, _, _ ->
-            binding.autoCompleteTypeAccountLayout.hint = null
-        }
 
-        binding.autoCompleteTypeAccount.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
-                    binding.autoCompleteTypeAccountLayout.hint = "Account Type"
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-
-        // Set default value for Balance
-        binding.editTextBalance.setText("") // Set default value here
-
-        // Check if editing an account
         val accountId = arguments?.getInt("accountId")
-        if (accountId != null && accountId != -1) { // Ensure valid accountId
-            binding.autoCompleteTypeAccountLayout.hint = null
+        if (accountId != null && accountId != -1) {
+            binding.toolbarTitle.text = getString(R.string.edit_account)
+
             accountViewModel.getAccountById(accountId).observe(viewLifecycleOwner) { account ->
                 currentAccount = account
-                if (account?.accountName != null) {
-                    binding.editTextAccountName.setText(account.accountName)
-                } else {
-                    binding.editTextAccountName.setText("")
+
+                // nama
+                binding.editTextAccountName.setText(account!!.accountName)
+
+                // spinner
+                val index = accountTypes.indexOf(account.accountType)
+                if (index != -1) binding.autoCompleteTypeAccount.setSelection(index)
+
+                // ICON SELECTED
+                selectedIcon = account.iconResName.toString()
+                iconAdapter.setSelectedIcon(selectedIcon)
+
+                account.color.let { hex ->
+                    colorAdapter.setSelectedColor(hex)
                 }
 
-                if (account?.balance != null && account.balance != 0.0) {
-                    binding.editTextBalance.setText(account.balance.toString())
-                } else {
-                    binding.editTextBalance.setText("");
-                }
-
-                binding.autoCompleteTypeAccount.setText(account?.accountType, false)
             }
         }
 
-        // Save button click listener
-        binding.buttonSave.setOnClickListener {
-            saveAccount()
-        }
+        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
+        binding.buttonSave.setOnClickListener { saveAccount() }
     }
+
 
     private fun saveAccount() {
         val name = binding.editTextAccountName.text.toString()
-        val type = binding.autoCompleteTypeAccount.text.toString()
-        val balance = binding.editTextBalance.text.toString().toDoubleOrNull() ?: 0.0
+        val type = binding.autoCompleteTypeAccount.selectedItem?.toString() ?: ""
 
         // Validate account name
         if (name.isBlank()) {
@@ -153,15 +160,45 @@ class AccountInputFragment : Fragment() {
             return
         }
 
+
+
         Utils.showLoading(binding.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
             delay(2000)
+
             val now = Date()
+
+            val colorHex = selectedColor?.let {
+                String.format("#%06X", 0xFFFFFF and it)
+            } ?: currentAccount?.color
+
+            val resNameValue = selectedIcon.takeIf { it.isNotBlank() }
+                ?: allIcons.first().key
+
+            if (currentAccount == null && resNameValue.isEmpty()) {
+                Toast.makeText(requireContext(), "Please select a icon", Toast.LENGTH_SHORT).show()
+                Utils.hideLoading(binding.progressBar)
+                return@launch
+            }
+
+            if (currentAccount == null && colorHex == null) {
+                Toast.makeText(requireContext(), "Please select a color", Toast.LENGTH_SHORT).show()
+                Utils.hideLoading(binding.progressBar)
+                return@launch
+            }
+
             val account = currentAccount?.copy(
                 accountName = name,
                 accountType = type,
-                balance = balance
-            ) ?: Account(0, name, type, balance)
+                color = colorHex!!,
+                iconResName = resNameValue
+            ) ?: Account(
+                accountName = name,
+                accountType = type,
+                balance = 0.0,
+                color = colorHex!!,
+                iconResName  = resNameValue
+            )
 
             if (currentAccount == null) {
                 account.createdAt = now
@@ -174,10 +211,39 @@ class AccountInputFragment : Fragment() {
             }
 
             Utils.hideLoading(binding.progressBar)
-            // Navigate back
             findNavController().navigateUp()
         }
+
     }
+
+    private fun setupColorAdapter() {
+        val colors = listOf(
+            0xFFFFFFFF.toInt(),
+            0xFF000000.toInt(),
+            0xFF4A4A4A.toInt(),
+            0xFF8D7B6A.toInt(),
+            0xFFB09EFF.toInt(),
+            0xFF5D81F7.toInt(),
+            0xFF227AF0.toInt(),
+            0xFF0094FF.toInt(),
+            0xFF5DD0FF.toInt(),
+            0xFF4CD4B0.toInt(),
+            0xFF8EE700.toInt(),
+            0xFFFFD600.toInt(),
+            0xFFFF9A00.toInt(),
+            0xFFFF6D6D.toInt(),
+            0xFFFF4E4E.toInt()
+        )
+
+        colorAdapter = ColorAdapter(colors) { selected ->
+            selectedColor = selected
+        }
+
+        binding.rvColors.layoutManager = GridLayoutManager(requireContext(), 6)
+        binding.rvColors.adapter = colorAdapter
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

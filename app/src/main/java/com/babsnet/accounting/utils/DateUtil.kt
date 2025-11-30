@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.EditText
+import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -75,7 +76,7 @@ object DateUtil {
      * @param editText The EditText where the selected date will be set.
      * @param dateFormat The desired date format (default: yyyy-MM-dd).
      */
-    fun showDatePicker(context: Context, editText: EditText, dateFormat: String = "yyyy-MM-dd") {
+    fun showDatePicker(context: Context, text: TextView, dateFormat: String = "yyyy-MM-dd") {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -88,7 +89,7 @@ object DateUtil {
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(selectedYear, selectedMonth, selectedDay)
                 val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
-                editText.setText(formatter.format(selectedDate.time))
+                text.text = formatter.format(selectedDate.time)
             },
             year,
             month,

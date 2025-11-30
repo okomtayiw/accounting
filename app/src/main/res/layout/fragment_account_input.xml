@@ -2,57 +2,66 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:windowBackground"
-    android:fitsSystemWindows="true"
-    tools:context=".ui.account.AccountInputFragment">
+    android:background="?android:colorBackground">
 
-    <!-- Custom Toolbar -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Toolbar -->
+    <LinearLayout
         android:id="@+id/custom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:padding="16dp"
-        android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:background="?attr/colorSurface"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Tombol kembali -->
         <ImageView
             android:id="@+id/btn_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back Button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@color/white" />
+            app:tint="?attr/colorOnSurface" />
 
-        <!-- Judul -->
         <TextView
             android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Account"
-            android:textSize="18sp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/add_account"
             android:textStyle="bold"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@id/btn_back"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textSize="18sp"
+            android:textColor="?attr/colorOnSurface" />
+    </LinearLayout>
 
-    <!-- Kontainer Scrollable -->
-    <ScrollView
-        android:id="@+id/scrollView"
+
+    <!-- SAVE BUTTON -->
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="@string/save"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/blue"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <!-- NestedScrollView -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollWrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingTop="10dp"
+        android:fillViewport="true"
+        android:padding="16dp"
+        android:scrollbars="none"
+        android:background="?android:colorBackground"
         app:layout_constraintTop_toBottomOf="@id/custom_toolbar"
         app:layout_constraintBottom_toTopOf="@id/buttonSave"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,139 +70,98 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="90dp">
 
-            <!-- Account Name -->
-            <LinearLayout
-                android:id="@+id/layout_account_name"
+            <!-- NAME -->
+            <TextView
+                android:text="@string/name_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/editTextAccountName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="@string/enter_name_category"
+                android:paddingHorizontal="14dp"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- TYPE -->
+            <TextView
+                android:text="@string/type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner
+                android:id="@+id/autoCompleteTypeAccount"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:gravity="center_vertical"
+                android:spinnerMode="dropdown"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- ICON -->
+            <TextView
+                android:text="@string/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/searchIcon"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="@string/search"
+                android:drawableStart="@drawable/ic_search"
+                android:paddingHorizontal="14dp"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="@color/text_secondary"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvIcons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="?attr/colorSurface"
-                android:padding="12dp"
-                android:elevation="2dp"
-                android:gravity="center_vertical">
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
 
-                <!-- Icon for Account Name -->
-                <ImageView
-                    android:id="@+id/icon_account_name"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_account_name"
-                    android:contentDescription="Account Name Icon"
-                    android:layout_marginEnd="8dp" />
+            <!-- COLOR -->
+            <TextView
+                android:text="@string/color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:layout_marginBottom="4dp"/>
 
-                <EditText
-                    android:id="@+id/editTextAccountName"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:minHeight="?attr/listPreferredItemHeight"
-                    android:hint="Account Name"
-                    android:textColorHint="?attr/colorOnSurface"
-                    android:background="@android:color/transparent"
-                    android:inputType="text"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-            <!-- Account Type Spinner -->
-            <!-- Account Type Spinner -->
-            <LinearLayout
-                android:id="@+id/layout_spinner_account_type"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvColors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="?attr/colorSurface"
-                android:padding="12dp"
-                android:elevation="2dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center_vertical">
-
-                <!-- Icon for Spinner -->
-                <ImageView
-                    android:id="@+id/icon_spinner"
-                    android:layout_width="24dp"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_category"
-                    android:layout_marginEnd="8dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/autoCompleteTypeAccountLayout"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:hint="Account Type"
-                    app:endIconMode="dropdown_menu"
-                    app:boxBackgroundMode="filled"
-                    app:boxBackgroundColor="?attr/colorSurface"
-                    app:boxStrokeWidth="0dp">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/autoCompleteTypeAccount"
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textColorHint="?attr/colorOnSurface"
-                        android:inputType="none"
-                        android:textSize="16sp"
-                        android:focusable="true"
-                        android:clickable="true"/>
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-            <!-- Balance -->
-            <LinearLayout
-                android:id="@+id/layout_balance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="?attr/colorSurface"
-                android:padding="12dp"
-                android:elevation="2dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center_vertical">
-
-                <!-- Icon for Balance -->
-                <ImageView
-                    android:id="@+id/icon_balance"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_account_balance_wallet"
-                    android:contentDescription="Balance Icon"
-                    android:layout_marginEnd="8dp" />
-
-                <EditText
-                    android:id="@+id/editTextBalance"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:minHeight="?attr/listPreferredItemHeight"
-                    android:hint="Account balance"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textColorHint="?attr/colorOnSurface"
-                    android:background="@android:color/transparent"
-                    android:inputType="number"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                android:nestedScrollingEnabled="false"/>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/buttonSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:padding="16dp"
-        android:text="Save"
-        android:backgroundTint="@color/purple_500"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- ProgressBar -->
     <ProgressBar
@@ -206,6 +174,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

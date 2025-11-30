@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.AccountAdapter
@@ -88,6 +90,12 @@ class AccountFragment : Fragment() {
         binding.fabAddAccount.setOnClickListener {
             navigateToAccountInputFragment()
         }
+
+        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        ContextCompat.getDrawable(requireContext(), R.drawable.list_divider)?.let {
+            divider.setDrawable(it)
+        }
+        binding.recyclerViewAccount.addItemDecoration(divider)
 
         return root
     }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorInputBackground" format="color"/>
+    <attr name="colorInputStroke" format="color"/>
+    <attr name="tabUnselectedTextColor" format="color"/>
+</resources>

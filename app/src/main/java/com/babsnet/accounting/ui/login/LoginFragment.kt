@@ -40,7 +40,7 @@ class LoginFragment : Fragment() {
         binding.buttonSignIn.setOnClickListener {
             val phoneNumber = binding.editTextPhone.text.toString()
             if (phoneNumber.isNotEmpty()) {
-                findNavController().navigate(R.id.action_loginFragment_to_home)
+//                findNavController().navigate(R.id.action_loginFragment_to_home)
             } else {
                 Toast.makeText(requireContext(), "Enter your phone number", Toast.LENGTH_SHORT).show()
             }

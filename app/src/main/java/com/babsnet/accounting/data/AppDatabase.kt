@@ -15,7 +15,7 @@ import com.babsnet.accounting.data.entity.LedgerWithAccount
 
 @Database(entities = [Journal::class, Account::class, Ledger::class],
     views = [LedgerWithAccount::class],
-    version = 7,
+    version = 8,
     exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

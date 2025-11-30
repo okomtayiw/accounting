@@ -1,21 +1,22 @@
 package com.babsnet.accounting.ui.journal
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
-import com.babsnet.accounting.adapter.AccountAdapterDialog
+import com.babsnet.accounting.adapter.CategoryAccountAdapter
 import com.babsnet.accounting.data.AppDatabase
-import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.data.entity.Journal
 import com.babsnet.accounting.databinding.FragmentAddEditJournalBinding
 import com.babsnet.accounting.repository.AccountRepository
@@ -45,6 +46,7 @@ class AddEditJournalFragment : Fragment() {
     private var journalExisting : Journal? = null
     private var  existAccountIdOne : Int? =null
     private var  existAccountIdTwo : Int? =null
+    private var tabExpenditure: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +66,7 @@ class AddEditJournalFragment : Fragment() {
         val repository = JournalRepository(journalDao, ledgerDao)
         val repositoryAccount = AccountRepository(accountDao, ledgerDao)
 
+        binding.tvTime.text = dateToString(Date())
         journalViewModel = ViewModelProvider(
             this, GenericViewModelFactory(JournalViewModel::class.java) {
                 JournalViewModel(repository)
@@ -83,23 +86,45 @@ class AddEditJournalFragment : Fragment() {
         journalId?.let { it ->
             journalViewModel.getJournalWithDetails(it).observe(viewLifecycleOwner) { journalWithDetails ->
                 if (journalWithDetails != null) {
-                    binding.inputDescription.text = Editable.Factory.getInstance()
+                    binding.etNote.text = Editable.Factory.getInstance()
                         .newEditable(journalWithDetails.journal.description ?: "")
 
-                    binding.accountNameOne.text = journalWithDetails.ledgers.getOrNull(0)?.accountName ?: ""
-                    binding.accountNameTwo.text = journalWithDetails.ledgers.getOrNull(1)?.accountName ?: ""
 
                     val total = (journalWithDetails.ledgers.getOrNull(0)?.ledgerCredit?.takeIf { it > 0.0 }
                         ?: journalWithDetails.ledgers.getOrNull(0)?.ledgerDebit ?: 0.0).toLong()
 
-                    binding.inputTotalAmount.text = Editable.Factory.getInstance().newEditable(total.toString())
-                    accountIdOne = journalWithDetails.ledgers[0].accountId
-                    accountIdTwo = journalWithDetails.ledgers[1].accountId
-                    existAccountIdOne = journalWithDetails.ledgers[0].accountId
-                    existAccountIdTwo = journalWithDetails.ledgers[1].accountId
+                    binding.etAmount.text = Editable.Factory.getInstance().newEditable(total.toString())
+                    journalWithDetails.ledgers.forEach { ledger ->
+                        if (ledger.accountType == "Assets") {
+                            accountIdOne = ledger.accountId
+                            existAccountIdOne = ledger.accountId
+                        } else {
+                            accountIdTwo = ledger.accountId
+                            existAccountIdTwo = ledger.accountId
+                        }
+                    }
 
+                    var isIncomeFound = false
 
-                    binding.inputDate.text = Editable.Factory.getInstance().newEditable(
+                    for (ledger in journalWithDetails.ledgers) {
+                        if (ledger.accountType == "Income") {
+                            isIncomeFound = true
+                            break
+                        }
+                    }
+
+                    if (isIncomeFound) {
+                        tabExpenditure = false
+                        selectTab(false)
+                        loadAccountCategories(
+                            accountViewModel = accountViewModel,
+                            accountType = "Income"
+                        )
+                    }
+
+                    binding.accountNameOne.text = journalWithDetails.ledgers[0].accountName
+
+                    binding.tvTime.text = Editable.Factory.getInstance().newEditable(
                         journalWithDetails.journal.date?.let { dateToString(it) }
                     )
                     journalExisting = journalWithDetails.journal
@@ -109,7 +134,7 @@ class AddEditJournalFragment : Fragment() {
 
 
         binding.inputDate.setOnClickListener {
-            DateUtil.showDatePicker(requireActivity(), binding.inputDate)
+            DateUtil.showDatePicker(requireActivity(), binding.tvTime)
         }
 
         binding.btnBack.setOnClickListener {
@@ -128,26 +153,64 @@ class AddEditJournalFragment : Fragment() {
             }
         }
 
-        binding.accountNameTwo.setOnClickListener {
-            Utils.showAccountSelectionDialog(
-                context = requireContext(),
-                lifecycleScope = viewLifecycleOwner.lifecycleScope,
-                accountViewModel = accountViewModel,
-                accountType = "Expenses"
-            ) { selectedAccount ->
-                binding.accountNameTwo.text = selectedAccount.accountName
-                accountIdTwo = selectedAccount.accountId
-            }
-        }
+
+
+        loadAccountCategories(
+            accountViewModel = accountViewModel,
+            accountType = "Expenses"
+        )
 
         saveButtonClick()
+        selectTab(tabExpenditure)
+        binding.tabExpenditure.setOnClickListener {
+            selectTab(true)
+            tabExpenditure = true
+            loadAccountCategories(
+                accountViewModel = accountViewModel,
+                accountType = "Expenses"
+            )
+        }
+        binding.tabRevenue.setOnClickListener {
+            tabExpenditure = false
+            selectTab(false)
+            loadAccountCategories(
+                accountViewModel = accountViewModel,
+                accountType = "Income"
+            )
+        }
     }
+
+
+    private fun selectTab(isExpenditure: Boolean) {
+
+        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.tab_text_selected)
+        val unselectedTextColor = ContextCompat.getColor(requireContext(), R.color.tab_text_unselected)
+
+        if (isExpenditure) {
+
+            binding.tabExpenditure.setBackgroundResource(R.drawable.tab_selected_bg)
+            binding.tabExpenditure.setTextColor(selectedTextColor)
+
+            binding.tabRevenue.setBackgroundResource(R.drawable.tab_unselected_bg)
+            binding.tabRevenue.setTextColor(unselectedTextColor)
+
+        } else {
+
+            binding.tabRevenue.setBackgroundResource(R.drawable.tab_selected_bg)
+            binding.tabRevenue.setTextColor(selectedTextColor)
+
+            binding.tabExpenditure.setBackgroundResource(R.drawable.tab_unselected_bg)
+            binding.tabExpenditure.setTextColor(unselectedTextColor)
+        }
+    }
+
+
 
     private fun saveButtonClick() {
         binding.btnSave.setOnClickListener {
-            val description = binding.inputDescription.text.toString()
-            val total = binding.inputTotalAmount.text.toString().toDoubleOrNull() ?: 0.0
-            val date = binding.inputDate.text.toString()
+            val description = binding.etNote.text.toString()
+            val total = binding.etAmount.text.toString().toDoubleOrNull() ?: 0.0
+            val date = binding.tvTime.text.toString()
 
 
             if (description.isEmpty() || date.isEmpty()) {
@@ -156,6 +219,10 @@ class AddEditJournalFragment : Fragment() {
             }
             Utils.showLoading(binding.progressBar)
             lifecycleScope.launch {
+                if (accountIdTwo == null) {
+                    Toast.makeText(requireContext(), "Category must be selected", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
                 try {
                     withContext(Dispatchers.IO) {
                         val debit = 0.0
@@ -171,42 +238,84 @@ class AddEditJournalFragment : Fragment() {
                                 createdAt = Date(),
                                 createdBy = "User"
                             )
-                            if (accountOne?.accountType  == "Assets") {
-                                existJournal = journalViewModel.saveJournalLedger(
-                                    newJournal,
-                                    debit,
-                                    total,
-                                    accountOne)
+                            if(tabExpenditure) {
+                                if (accountOne?.accountType  == "Assets") {
+                                    existJournal = journalViewModel.saveJournalLedger(
+                                        newJournal,
+                                        debit,
+                                        total,
+                                        accountOne)
+                                }
+
+                                if (accountTwo?.accountType == "Expenses" && existJournal != null ) {
+                                    journalViewModel.saveJournalLedger(
+                                        existJournal,
+                                        total,
+                                        credit,
+                                        accountTwo)
+                                }
+                            } else {
+                                if (accountOne?.accountType  == "Assets") {
+                                    existJournal = journalViewModel.saveJournalLedger(
+                                        newJournal,
+                                        total,
+                                        credit,
+                                        accountOne)
+                                }
+
+                                if (accountTwo?.accountType == "Income" && existJournal != null ) {
+                                    journalViewModel.saveJournalLedger(
+                                        existJournal,
+                                        debit,
+                                        total,
+                                        accountTwo)
+                                }
                             }
 
-                            if (accountTwo?.accountType == "Expenses" && existJournal != null ) {
-                                journalViewModel.saveJournalLedger(
-                                    existJournal,
-                                    total,
-                                    credit,
-                                    accountTwo)
-                            }
                         } else {
                             var existingJournalUpdateSuccess: Journal? = null
-                            if (accountOne?.accountType  == "Assets") {
-                                journalExisting?.updatedBy = "User"
-                                journalExisting?.description = description
-                                journalExisting?.updatedAt = Date()
-                                journalExisting?.date = DateUtil.stringToDate(date)
-                                existingJournalUpdateSuccess = journalViewModel.updateJournalLedger(
-                                    journalExisting!!,
-                                    debit,
-                                    total,
-                                    accountOne, existAccountIdOne)
+                            if(tabExpenditure){
+                                if (accountOne?.accountType  == "Assets") {
+                                    journalExisting?.updatedBy = "User"
+                                    journalExisting?.description = description
+                                    journalExisting?.updatedAt = Date()
+                                    journalExisting?.date = DateUtil.stringToDate(date)
+                                    existingJournalUpdateSuccess = journalViewModel.updateJournalLedger(
+                                        journalExisting!!,
+                                        debit,
+                                        total,
+                                        accountOne, existAccountIdOne)
+                                }
+                                if (accountTwo?.accountType == "Expenses" && existingJournalUpdateSuccess != null ) {
+                                    journalViewModel.updateJournalLedger(
+                                        existingJournalUpdateSuccess,
+                                        total,
+                                        credit,
+                                        accountTwo,
+                                        existAccountIdTwo)
+                                }
+                            } else {
+                                if (accountOne?.accountType  == "Assets") {
+                                    journalExisting?.updatedBy = "User"
+                                    journalExisting?.description = description
+                                    journalExisting?.updatedAt = Date()
+                                    journalExisting?.date = DateUtil.stringToDate(date)
+                                    existingJournalUpdateSuccess = journalViewModel.updateJournalLedger(
+                                        journalExisting!!,
+                                        total,
+                                        credit,
+                                        accountOne, existAccountIdOne)
+                                }
+                                if (accountTwo?.accountType == "Income" && existingJournalUpdateSuccess != null ) {
+                                    journalViewModel.updateJournalLedger(
+                                        existingJournalUpdateSuccess,
+                                        debit,
+                                        total,
+                                        accountTwo,
+                                        existAccountIdTwo)
+                                }
                             }
-                            if (accountTwo?.accountType == "Expenses" && existingJournalUpdateSuccess != null ) {
-                                journalViewModel.updateJournalLedger(
-                                    existingJournalUpdateSuccess,
-                                    total,
-                                    credit,
-                                    accountTwo,
-                                    existAccountIdTwo)
-                            }
+
                         }
 
                         withContext(Dispatchers.Main) {
@@ -235,34 +344,27 @@ class AddEditJournalFragment : Fragment() {
         }
     }
 
-    private fun showAccountSelectionDialog(accountType: String, onAccountSelected: (Account) -> Unit) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_select_account, null)
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(true)
-            .create()
+    private fun loadAccountCategories(
+        accountViewModel: AccountViewModel,
+        accountType: String
+    ) {
+        val rv = requireView().findViewById<RecyclerView>(R.id.rvCategory)
+        Log.d("CATEGORY", "rv = $rv")
+        rv.layoutManager = GridLayoutManager(requireContext(), 3)
 
-        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerViewAccounts)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        viewLifecycleOwner.lifecycleScope.launch {
+            val accounts = withContext(Dispatchers.IO) {
+                accountViewModel.getListAccount(accountType)
+            }
 
-        lifecycleScope.launch {
-            try {
-                if (!isAdded || requireActivity().isFinishing) return@launch
 
-                val accounts = withContext(Dispatchers.IO) {
-                    accountViewModel.getListAccount(accountType)
-                }
+            val adapter = CategoryAccountAdapter(accounts) {
+                accountIdTwo = it.accountId
+            }
+            rv.adapter = adapter
 
-                withContext(Dispatchers.Main.immediate) {
-                    if (!isAdded || requireActivity().isFinishing) return@withContext
-                    recyclerView.adapter = AccountAdapterDialog(accounts) { account ->
-                        onAccountSelected(account)
-                        dialog.dismiss()
-                    }
-                    dialog.show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            if (journalId != null) {
+                adapter.setSelectedAccountId(existAccountIdTwo)
             }
         }
     }

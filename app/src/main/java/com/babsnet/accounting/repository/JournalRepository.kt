@@ -166,7 +166,7 @@ class JournalRepository(
     }
 
     fun getTransactionsByAccount(startDate: Long, endDate: Long, accountId: Int?): Flow<List<TransactionData>> {
-        return if (accountId == null || accountId == 0 || accountId == -1) {
+        return if (accountId == null || accountId == 0 || accountId == -1 || accountId == -2 || accountId == -3) {
             ledgerDao.getTransactionsBetweenDates(startDate, endDate)
         } else {
             ledgerDao.getTransactionsBetweenDatesWitAccountId(startDate, endDate, accountId)

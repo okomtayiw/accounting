@@ -1,19 +1,19 @@
 package com.babsnet.accounting.ui.journal
 
-import android.annotation.SuppressLint
+
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.JournalWithDetailsAdapter
 import com.babsnet.accounting.data.AppDatabase
-import com.babsnet.accounting.data.dao.JournalDao
-import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.databinding.FragmentMonthlyBinding
 import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.DateUtil
@@ -24,75 +24,73 @@ import java.time.LocalDate
 
 
 class MonthlyFragment : Fragment() {
+
     private var _binding: FragmentMonthlyBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var journalViewModel: JournalViewModel
-    private lateinit var journalWithDetailsAdapter: JournalWithDetailsAdapter
+    private val adapter by lazy { setupAdapter() }
 
-    @SuppressLint("NewApi")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        // Setup binding
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMonthlyBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        // Setup database, DAO, and repository
-        val journalDao : JournalDao = AppDatabase.getDatabase(requireContext()).journalDao()
-        val ledgerDao: LedgerDao = AppDatabase.getDatabase(requireContext()).ledgerDao()
-        val repository = JournalRepository(journalDao, ledgerDao)
-
-        // Setup ViewModel with factory
-        val journalViewModelFactory = GenericViewModelFactory(
-            JournalViewModel::class.java
-        ) { JournalViewModel(repository) }
-
-        journalViewModel = ViewModelProvider(this, journalViewModelFactory)[JournalViewModel::class.java]
-
-        // insertMockData()
-        // Setup RecyclerView
-        journalWithDetailsAdapter = JournalWithDetailsAdapter(
-            onDeleteJournal = { journalDetail ->
-                Utils.showDeleteConfirmationDialog(requireContext()){
-                    journalViewModel.delete(journalDetail.journal)
-                }
-                // Handle delete logic
-            },
-            onEditJournal = { journalDetail ->
-                // Navigate to AddEditJournalFragment with the journal ID
-                val bundle = Bundle().apply {
-                    putInt("journalId", journalDetail.journal.journalId)
-                }
-                findNavController().navigate(R.id.action_journal_to_add_edit_journal, bundle)
-            }
-        )
-        binding.recyclerViewJournal.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewJournal.adapter = journalWithDetailsAdapter
-
-        val today = LocalDate.now()
-        val currentYear = today.year
-        val currentMonth = today.monthValue
-        val (currentYears, currentMonths) = DateUtil.getStartAndEndOfMonth(currentYear, currentMonth)
-        journalViewModel.getJournalsForMonth(currentYears, currentMonths).observe(viewLifecycleOwner) { journalWithDetailsList ->
-            // Update RecyclerView adapter di sini
-            journalWithDetailsAdapter.submitList(journalWithDetailsList)
-            showEmptyState(journalWithDetailsList.isEmpty())
-        }
-
-
-        return root
+        return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupViewModel()
+        setupRecycler()
+        observeData()
+    }
+
+    private fun setupViewModel() {
+        val db = AppDatabase.getDatabase(requireContext())
+        val repo = JournalRepository(db.journalDao(), db.ledgerDao())
+
+        journalViewModel = ViewModelProvider(
+            this,
+            GenericViewModelFactory(JournalViewModel::class.java) { JournalViewModel(repo) }
+        )[JournalViewModel::class.java]
+    }
+
+    private fun setupRecycler() {
+        binding.recyclerViewJournal.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@MonthlyFragment.adapter
+            itemAnimator?.apply { addDuration = 180; moveDuration = 180; changeDuration = 180 }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun observeData() {
+        val today = LocalDate.now()
+        val (y, m) = DateUtil.getStartAndEndOfMonth(today.year, today.monthValue)
+
+        journalViewModel.getJournalsForMonth(y, m).observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+            showEmptyState(it.isEmpty())
+        }
+    }
+
+    private fun setupAdapter() = JournalWithDetailsAdapter(
+        onDeleteJournal = { item ->
+            Utils.showDeleteConfirmationDialog(requireContext()) {
+                journalViewModel.delete(item.journal)
+            }
+        },
+        onEditJournal = { item ->
+            findNavController().navigate(
+                R.id.action_journal_to_add_edit_journal,
+                Bundle().apply { putInt("journalId", item.journal.journalId) }
+            )
+        }
+    )
 
     private fun showEmptyState(isEmpty: Boolean) {
         binding.tvNoData.visibility = if (isEmpty) View.VISIBLE else View.GONE
         binding.recyclerViewJournal.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

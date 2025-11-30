@@ -19,6 +19,12 @@ data class Account(
     @ColumnInfo(name = "balance")
     var balance: Double = 0.0,
 
+    @ColumnInfo(name = "icon_color")
+    var color: String? = null ,
+
+    @ColumnInfo(name = "icon_res_name")
+    var iconResName: String? = null,
+
     @ColumnInfo(name = "created_at")
     var createdAt: Date? = null,
 

@@ -3,67 +3,96 @@
     "accountId": 1,
     "accountName": "Kas",
     "accountType": "Assets",
-    "description": "Uang tunai yang dimiliki"
+    "description": "Uang tunai yang dimiliki",
+    "icon_res_name": "ic_wallet",
+    "icon_color": "#FF8EE700"
   },
   {
     "accountId": 2,
     "accountName": "Bank",
     "accountType": "Assets",
-    "description": "Uang yang tersimpan di rekening bank"
+    "description": "Uang yang tersimpan di rekening bank",
+    "icon_res_name": "ic_bank",
+    "icon_color": "#FF5D81F7"
   },
-
   {
     "accountId": 3,
     "accountName": "Belanja Harian",
     "accountType": "Expenses",
-    "description": "Pengeluaran kecil seperti makanan & transportasi"
+    "description": "Pengeluaran kecil seperti makanan & transportasi",
+    "icon_res_name": "ic_shopping",
+    "icon_color": "#FFFF9A00"
   },
   {
     "accountId": 4,
     "accountName": "Sewa",
     "accountType": "Expenses",
-    "description": "Biaya sewa tempat tinggal atau kantor"
+    "description": "Biaya sewa tempat tinggal atau kantor",
+    "icon_res_name": "ic_house",
+    "icon_color": "#FF4CD4B0"
   },
   {
     "accountId": 5,
-    "accountName": "Tagihan Listrik ",
+    "accountName": "Tagihan Listrik",
     "accountType": "Expenses",
-    "description": "Pengeluaran untuk listrik"
+    "description": "Pengeluaran untuk listrik",
+    "icon_res_name": "ic_electricity",
+    "icon_color": "#FFFF4E4E"
   },
   {
     "accountId": 6,
     "accountName": "Tagihan Air",
     "accountType": "Expenses",
-    "description": "Biaya bulanan untuk air"
+    "description": "Biaya bulanan untuk air",
+    "icon_res_name": "ic_invoice",
+    "icon_color": "#FF0094FF"
   },
   {
     "accountId": 7,
     "accountName": "Biaya Internet & Telepon",
     "accountType": "Expenses",
-    "description": "Pembayaran internet & telepon"
+    "description": "Pembayaran internet & telepon",
+    "icon_res_name": "ic_phone",
+    "icon_color": "#FF8D7B6A"
   },
   {
     "accountId": 8,
     "accountName": "Asuransi",
     "accountType": "Expenses",
-    "description": "Premi asuransi kesehatan, kendaraan, dll."
+    "description": "Premi asuransi kesehatan, kendaraan, dll.",
+    "icon_res_name": "ic_assurance",
+    "icon_color": "#FFFF6D6D"
   },
   {
     "accountId": 9,
     "accountName": "Cicilan Kendaraan",
     "accountType": "Expenses",
-    "description": "Pembayaran angsuran mobil/motor"
+    "description": "Pembayaran angsuran mobil/motor",
+    "icon_res_name": "ic_credit",
+    "icon_color": "#FF227AF0"
   },
   {
     "accountId": 10,
     "accountName": "Hiburan",
     "accountType": "Expenses",
-    "description": "Pengeluaran untuk film, game, dll."
+    "description": "Pengeluaran untuk film, game, dll.",
+    "icon_res_name": "ic_stars",
+    "icon_color": "#FFFFD600"
   },
   {
     "accountId": 11,
     "accountName": "Pendidikan",
     "accountType": "Expenses",
-    "description": "Biaya sekolah, kursus, atau buku"
+    "description": "Biaya sekolah, kursus, atau buku",
+    "icon_res_name": "ic_school",
+    "icon_color": "#FFB09EFF"
+  },
+  {
+    "accountId": 12,
+    "accountName": "Pendapatan",
+    "accountType": "Income",
+    "description": "Pendapatan utama",
+    "icon_res_name": "ic_income",
+    "icon_color": "#FFFFFFFF"
   }
 ]

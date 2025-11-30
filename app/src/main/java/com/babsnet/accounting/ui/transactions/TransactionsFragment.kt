@@ -62,18 +62,19 @@ class TransactionsFragment : Fragment() {
         )[AccountViewModel::class.java]
 
         progressBar = binding.progressBar
-        binding.inputAccountName.setOnClickListener {
+        binding.lnAccountName.setOnClickListener {
             lifecycleScope.launch {
                 val originalAccounts = withContext(Dispatchers.IO) {
                     accountViewModel.getListAccount("Expenses")
                 }
 
-                val allAccount = Account(
-                    accountId = -1,
-                    accountName = "ALL",
-                    accountType = "Expenses"
+                val allOptions = listOf(
+                    Account(accountId = -1, accountName = "ALL Ledger", accountType = "Report"),
+                    Account(accountId = -2, accountName = "ALL Laba Rugi", accountType = "Report"),
+                    Account(accountId = -3, accountName = "ALL Neraca", accountType = "Report")
                 )
-                val modifiedAccounts = listOf(allAccount) + originalAccounts
+
+                val modifiedAccounts = allOptions + originalAccounts
 
                 Utils.showAccountSelectionDialog(
                     context = requireContext(),
@@ -124,7 +125,14 @@ class TransactionsFragment : Fragment() {
                     if (transactions.isEmpty()) {
                         Toast.makeText(requireContext(), "No data to export", Toast.LENGTH_SHORT).show()
                     } else {
-                        Utils.createPdf(requireContext(), transactions)
+                        if(accountId ==  -2) {
+                            Utils.createPdfProfitAndLoss(requireContext(), transactions)
+                        } else if(accountId == -3){
+                            Utils.createPdfBalanceSheet(requireContext(), transactions)
+                        } else {
+                            Utils.createPdf(requireContext(), transactions)
+                        }
+
                     }
                 }
             Utils.hideLoading(binding.progressBar)

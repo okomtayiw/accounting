@@ -11,6 +11,8 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+
+
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.JournalPagerAdapter
 import com.babsnet.accounting.databinding.FragmentJournalBinding
@@ -29,15 +31,15 @@ class JournalFragment : Fragment() {
         _binding = FragmentJournalBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val adapter = JournalPagerAdapter(requireActivity())
+        val adapter = JournalPagerAdapter(this)
         binding.viewPagerJournal.adapter = adapter
 
 
         TabLayoutMediator(binding.tabLayout, binding.viewPagerJournal) { tab, position ->
             tab.text = when (position) {
-                0 -> "Mingguan"
-                1 -> "Bulanan"
-                else -> "Tahunan"
+                0 -> "Weekly"
+                1 -> "Monthly"
+                else -> "Annual"
             }
         }.attach()
 

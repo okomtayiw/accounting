@@ -18,6 +18,7 @@ materialVersion = "1.12.0"
 navigationFragmentKtxVersion = "2.8.6"
 navigationUiKtxVersion = "2.8.6"
 roomKtx = "2.6.1"
+shimmer = "0.5.0"
 vectordrawable = "1.2.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
@@ -67,6 +68,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 #noinspection SimilarGradleDependency
 material-v130 = { module = "com.google.android.material:material", version.ref = "googleMaterialVersion" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 [plugins]

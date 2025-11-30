@@ -39,6 +39,7 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
@@ -57,11 +58,15 @@ object Utils {
 
     }
 
+    fun dpToPx(context: Context, dp: Int): Int {
+        return (dp * context.resources.displayMetrics.density).toInt()
+    }
+
 
     fun hideLoading(progressBar: ProgressBar) {
         Handler(Looper.getMainLooper()).postDelayed({
             progressBar.visibility = View.GONE
-        }, 30000)
+        }, 3000)
     }
 
     fun showDeleteConfirmationDialog(
@@ -336,7 +341,9 @@ object Utils {
 
             var totalDebit = 0.0
             var totalCredit = 0.0
-            val decimalFormat = DecimalFormat("#,###.00")
+            val decimalFormat = DecimalFormat("#,###.##").apply {
+                roundingMode = RoundingMode.DOWN
+            }
 
             transactionData.forEachIndexed { index, row ->
                 table.addCell(Cell().add(Paragraph((index + 1).toString()))) // Nomor urut
@@ -364,6 +371,124 @@ object Utils {
             Toast.makeText(context, "Failed to create PDF: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
+
+    fun createPdfProfitAndLoss(context: Context, transactionData: List<TransactionData>) {
+
+        val dateTime = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "Profit_and_Loss_$dateTime.pdf"
+        )
+
+        try {
+            val pdf = PdfDocument(PdfWriter(file))
+            val doc = Document(pdf)
+
+            doc.add(
+                Paragraph("PROFIT AND LOSS STATEMENT")
+                    .setBold()
+                    .setFontSize(18f)
+                    .setTextAlignment(TextAlignment.CENTER)
+            )
+
+            doc.add(Paragraph("\n"))
+
+            val table = Table(UnitValue.createPercentArray(floatArrayOf(4f, 2f)))
+            table.setWidth(UnitValue.createPercentValue(100f))
+
+            // Format angka tanpa pembulatan
+            val format = { value: Double ->
+                if (value % 1 == 0.0) DecimalFormat("#,###").format(value)
+                else DecimalFormat("#,###.############").apply { roundingMode = RoundingMode.DOWN }.format(value)
+            }
+
+            val revenue = transactionData.filter { it.accountType == "Income" }.sumOf { it.credit - it.debit }
+            val expenses = transactionData.filter { it.accountType == "Expenses" }.sumOf { it.debit - it.credit }
+            val net = revenue - expenses
+
+            table.addCell(Cell().add(Paragraph("Total Revenue").setBold()))
+            table.addCell(format(revenue))
+
+            table.addCell(Cell().add(Paragraph("Total Expenses").setBold()))
+            table.addCell(format(expenses))
+
+            table.addCell(Cell().add(Paragraph("Net Profit / Net Loss").setBold()))
+            table.addCell(format(net))
+
+            doc.add(table)
+            doc.close()
+
+            Toast.makeText(context, "Profit & Loss PDF saved → ${file.path}", Toast.LENGTH_LONG).show()
+
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
+    fun createPdfBalanceSheet(context: Context, transactionData: List<TransactionData>) {
+
+        val dateTime = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "Balance_Sheet_$dateTime.pdf"
+        )
+
+        try {
+            val pdf = PdfDocument(PdfWriter(file))
+            val doc = Document(pdf)
+
+            doc.add(Paragraph("BALANCE SHEET")
+                .setBold().setFontSize(18f).setTextAlignment(TextAlignment.CENTER)
+            )
+
+            doc.add(Paragraph("\nReport Generated: $dateTime\n"))
+
+            val table = Table(UnitValue.createPercentArray(floatArrayOf(4f,2f)))
+            table.setWidth(UnitValue.createPercentValue(100f))
+
+            val formatNumber = { value: Double ->
+                if(value % 1 == 0.0) DecimalFormat("#,###").format(value)
+                else DecimalFormat("#,###.############")
+                    .apply { roundingMode = RoundingMode.DOWN }
+                    .format(value)
+            }
+
+            val totalAssets = transactionData.filter { it.accountType == "Assets" }.sumOf { it.debit - it.credit }
+            val totalIncome = transactionData.filter { it.accountType == "Income" }.sumOf { it.credit - it.debit }
+            val totalExpenses = transactionData.filter { it.accountType == "Expenses" }.sumOf { it.debit - it.credit }
+            val equity = totalIncome - totalExpenses
+
+            table.addCell(Cell().add(Paragraph("Assets").setBold()))
+            table.addCell(formatNumber(totalAssets))
+
+            table.addCell(Cell().add(Paragraph("Net Income / Loss").setBold()))
+            table.addCell(formatNumber(equity))
+
+            table.addCell(Cell().add(Paragraph("Total Expenses").setBold()))
+            table.addCell(formatNumber(totalExpenses))
+
+            table.addCell(Cell().add(Paragraph("\nTotal Balance (Assets)").setBold()))
+            table.addCell(formatNumber(totalAssets))
+
+            doc.add(table)
+            doc.close()
+
+            Toast.makeText(context, "Balance Sheet PDF saved → ${file.path}", Toast.LENGTH_LONG).show()
+
+        } catch(e: Exception) {
+            Toast.makeText(context, "Error → ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun formatAmount(value: Double): String {
+        return if (value % 1 == 0.0) {
+            value.toInt().toString()
+        } else {
+            value.toString()
+        }
+    }
+
 
 
 

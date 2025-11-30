@@ -1,30 +1,57 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.AccountingSystem" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+    <!-- LIGHT THEME -->
+    <style name="Theme.AccountingSystem" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+        <!-- ===== PRIMARY ===== -->
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/blue_pressed</item>
         <item name="colorOnPrimary">@color/white</item>
 
-        <!-- Secondary -->
-        <item name="colorSecondary">@color/purple_500</item>
+        <!-- ===== SECONDARY ===== -->
+        <item name="colorSecondary">@color/blue</item>
         <item name="colorOnSecondary">@color/white</item>
 
-        <!-- Background -->
-        <item name="android:windowBackground">@color/window_bg</item>
+        <!-- ===== BACKGROUND ===== -->
+        <item name="android:colorBackground">@color/white</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="colorOnBackground">@color/text_primary</item>
-        <item name="colorBackgroundFloating">@color/purple_700</item>
 
-
-        <!-- Surface -->
-        <item name="colorSurface">@color/soft_surface</item>
+        <!-- ===== SURFACE ===== -->
+        <item name="colorSurface">@color/surface_card</item>
         <item name="colorOnSurface">@color/text_primary</item>
 
-        <!-- Status bar -->
-        <item name="android:statusBarColor" tools:targetApi="21">@color/purple_700</item>
+        <!-- ===== FLOATING ===== -->
+        <item name="colorBackgroundFloating">@color/white</item>
 
-        <!-- Typography -->
+        <!-- ==== STATUS BAR === -->
+        <item name="android:colorAccent">@android:color/transparent</item>
+        <item name="colorAccent">@android:color/transparent</item>
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+
+
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <!-- Prevent transparency (Android 12–14) -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:enforceStatusBarContrast" tools:targetApi="29">false</item>
+
+        <!-- ===== NAVIGATION BAR ===== -->
+        <item name="android:navigationBarColor">@color/white</item>
+
+
+
+        <!-- ===== TYPOGRAPHY ===== -->
         <item name="fontFamily">@font/accounting_font</item>
+
+        <!-- ===== INPUT COLORS ===== -->
+        <item name="colorInputBackground">@color/input_bg_light</item>
+        <item name="colorInputStroke">@color/input_stroke_light</item>
+
+        <item name="tabUnselectedTextColor">@color/black</item>
+
     </style>
 
 </resources>

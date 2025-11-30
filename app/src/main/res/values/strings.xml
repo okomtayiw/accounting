@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">accounting system</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Account</string>
+    <string name="title_home">Category</string>
     <string name="title_journal">Journal</string>
     <string name="title_add_journal">Add journal</string>
     <string name="title_transactions">Transactions</string>
@@ -11,6 +11,7 @@
     <string-array name="account_types">
         <item>Assets</item>
         <item>Expenses</item>
+        <item>Income</item>
     </string-array>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -22,8 +23,31 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-    <string name="title_account">Account</string>
+    <string name="title_account">Category</string>
     <string name="no_account_data">Don\'t have account data yet</string>
-    <string name="add_account">Add Account</string>
+    <string name="add_account">Add Category</string>
+    <string name="title_report">Report</string>
+    <string name="desc_not_yet_data">Not yet data journal</string>
+    <string name="name_category">Name</string>
+    <string name="color">Color</string>
+    <string name="save">Save</string>
+    <string name="search">Search</string>
+    <string name="enter_name_category">Enter the name of category</string>
+    <string name="icon">Icon</string>
+    <string name="back_button">Back button</string>
+    <string name="edit_account">Edit category</string>
+    <string name="time">Time</string>
+    <string name="august_12_2024">August 12, 2024</string>
+    <string name="type">Type</string>
+    <string name="revenue">Revenue</string>
+    <string name="expenditure">Expenditure</string>
+    <string name="save_expenses">Save expenses</string>
+    <string name="edit">Edit</string>
+    <string name="category">Category</string>
+    <string name="enter_notes">Enter notes</string>
+    <string name="enter_the_amount">Enter the amount</string>
+    <string name="date">Date</string>
+    <string name="download">Download</string>
+    <string name="close_application">Close Application</string>
 
 </resources>

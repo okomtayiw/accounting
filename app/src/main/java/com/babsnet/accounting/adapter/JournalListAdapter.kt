@@ -13,6 +13,7 @@ import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.JournalWithDetails
 import com.babsnet.accounting.databinding.ItemJournalBinding
 import com.babsnet.accounting.utils.DateUtil
+import com.babsnet.accounting.utils.Utils
 
 class JournalWithDetailsAdapter(
     private val onDeleteJournal: (JournalWithDetails) -> Unit,
@@ -59,8 +60,8 @@ class JournalWithDetailsAdapter(
                 firstLedgerTwo.ledgerDebit
             }
 
-            binding.textAccountNameOne.text = "${journalWithDetails.ledgers[0].accountName} (${valueAmountOne})"
-            binding.textAccountNameTwo.text =  "${journalWithDetails.ledgers[1].accountName} (${valueAmountTwo})"
+            binding.textAccountNameOne.text = "${journalWithDetails.ledgers[0].accountName} (${Utils.formatAmount(valueAmountOne)})"
+            binding.textAccountNameTwo.text =  "${journalWithDetails.ledgers[1].accountName} (${Utils.formatAmount(valueAmountTwo)})"
 
             val context = binding.root.context
 

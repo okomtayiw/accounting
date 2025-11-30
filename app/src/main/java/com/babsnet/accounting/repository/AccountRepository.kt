@@ -54,6 +54,8 @@ data class AccountRepository(private val accountDao:AccountDao,
                     accountId = jsonObject.getInt("accountId"),
                     accountName = jsonObject.getString("accountName"),
                     accountType = jsonObject.getString("accountType"),
+                    color = jsonObject.getString("icon_color"),
+                    iconResName = jsonObject.getString("icon_res_name"),
                     balance = 0.0,
                     createdAt = Date(),
                     createdBy = "System"

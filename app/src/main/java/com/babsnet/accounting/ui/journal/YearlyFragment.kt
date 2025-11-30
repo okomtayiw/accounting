@@ -1,19 +1,18 @@
 package com.babsnet.accounting.ui.journal
 
-import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.JournalWithDetailsAdapter
 import com.babsnet.accounting.data.AppDatabase
-import com.babsnet.accounting.data.dao.JournalDao
-import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.databinding.FragmentYearlyBinding
 import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.DateUtil
@@ -22,81 +21,85 @@ import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.JournalViewModel
 import java.time.LocalDate
 
-
 class YearlyFragment : Fragment() {
+
     private var _binding: FragmentYearlyBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var journalViewModel: JournalViewModel
-    private lateinit var journalWithDetailsAdapter: JournalWithDetailsAdapter
 
-    @SuppressLint("NewApi")
+    /** Adapter dibuat Lazy agar tidak recreate saat tab di-swipe */
+    private val adapter by lazy {
+        JournalWithDetailsAdapter(
+            onDeleteJournal = { item ->
+                Utils.showDeleteConfirmationDialog(requireContext()) {
+                    journalViewModel.delete(item.journal)
+                }
+            },
+            onEditJournal = { item ->
+                findNavController().navigate(
+                    R.id.action_journal_to_add_edit_journal,
+                    Bundle().apply { putInt("journalId", item.journal.journalId) }
+                )
+            }
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
-        // Setup binding
         _binding = FragmentYearlyBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        // Setup database, DAO, and repository
-        val journalDao : JournalDao = AppDatabase.getDatabase(requireContext()).journalDao()
-        val ledgerDao: LedgerDao = AppDatabase.getDatabase(requireContext()).ledgerDao()
-        val repository = JournalRepository(journalDao, ledgerDao)
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Setup ViewModel with factory
-        val journalViewModelFactory = GenericViewModelFactory(
-            JournalViewModel::class.java
-        ) { JournalViewModel(repository) }
+        setupViewModel()
+        setupRecycler()
+        observeData()
+    }
 
-        journalViewModel = ViewModelProvider(this, journalViewModelFactory)[JournalViewModel::class.java]
+    private fun setupViewModel() {
+        val db = AppDatabase.getDatabase(requireContext())
+        val repo = JournalRepository(db.journalDao(), db.ledgerDao())
 
-        // insertMockData()
-        // Setup RecyclerView
-        journalWithDetailsAdapter = JournalWithDetailsAdapter(
-            onDeleteJournal = { journalDetail ->
-                Utils.showDeleteConfirmationDialog(requireContext()){
-                    journalViewModel.delete(journalDetail.journal)
-                }
-                // Handle delete logic
-            },
-            onEditJournal = { journalDetail ->
-                // Navigate to AddEditJournalFragment with the journal ID
-                val bundle = Bundle().apply {
-                    putInt("journalId", journalDetail.journal.journalId)
-                }
-                findNavController().navigate(R.id.action_journal_to_add_edit_journal, bundle)
+        journalViewModel = ViewModelProvider(
+            this,
+            GenericViewModelFactory(JournalViewModel::class.java) { JournalViewModel(repo) }
+        )[JournalViewModel::class.java]
+    }
+
+    private fun setupRecycler() {
+        binding.recyclerViewJournal.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@YearlyFragment.adapter
+            itemAnimator?.apply {
+                addDuration = 180
+                changeDuration = 180
+                moveDuration = 180
             }
-        )
-        binding.recyclerViewJournal.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewJournal.adapter = journalWithDetailsAdapter
-
-        // Observe data and submit to adapter
-//        journalViewModel.allJournalsWithDetails.observe(viewLifecycleOwner) { journalWithDetailsList ->
-//            // Update RecyclerView adapter here
-//            journalWithDetailsAdapter.submitList(journalWithDetailsList)
-//            showEmptyState(journalWithDetailsList.isEmpty())
-//
-//        }
-        val today = LocalDate.now()
-        val currentYear = today.year
-        val (startOfYearMillis, endOfYearMillis) = DateUtil.getStartAndEndOfYear(currentYear)
-        journalViewModel.getJournalsForYear(startOfYearMillis, endOfYearMillis).observe(viewLifecycleOwner) { journalWithDetailsList ->
-            // Update RecyclerView adapter di sini
-            journalWithDetailsAdapter.submitList(journalWithDetailsList)
-            showEmptyState(journalWithDetailsList.isEmpty())
         }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun observeData() {
+        val currentYear = LocalDate.now().year
+        val (start, end) = DateUtil.getStartAndEndOfYear(currentYear)
 
-        return root
+        journalViewModel.getJournalsForYear(start, end).observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+            showEmptyState(it.isEmpty())
+        }
     }
 
     private fun showEmptyState(isEmpty: Boolean) {
         binding.tvNoData.visibility = if (isEmpty) View.VISIBLE else View.GONE
         binding.recyclerViewJournal.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

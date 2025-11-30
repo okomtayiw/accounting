@@ -92,6 +92,7 @@ dependencies {
     implementation libs.androidx.viewpager2
     implementation libs.material.v130
 
+    implementation libs.shimmer
 
 
 

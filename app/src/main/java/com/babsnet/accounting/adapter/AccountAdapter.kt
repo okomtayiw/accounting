@@ -2,6 +2,7 @@ package com.babsnet.accounting.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -11,9 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.Account
-import com.babsnet.accounting.data.entity.JournalWithDetails
-import com.babsnet.accounting.utils.DateUtil
-import com.babsnet.accounting.utils.Utils
+import androidx.core.graphics.toColorInt
 
 class AccountAdapter(
     private var accounts: List<Account>,
@@ -21,32 +20,47 @@ class AccountAdapter(
     private val onDeleteClick: (Account) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
-    // ViewHolder class
     inner class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val nameTextView: TextView = view.findViewById(R.id.textViewName)
-        private val nameTextAccountType: TextView = view.findViewById(R.id.textViewAccountType)
-        private val balanceTextView: TextView = view.findViewById(R.id.textViewBalance)
-        private val textViewCreatedDate:TextView = view.findViewById(R.id.textViewCreatedDate)
-        private val openMenu: ImageView = view.findViewById(R.id.arrowIcon)
+
+        private val tvName: TextView = view.findViewById(R.id.tvCategoryName)
+        private val imgIcon: ImageView = view.findViewById(R.id.imgCategoryIcon)
 
         @SuppressLint("SetTextI18n")
         fun bind(account: Account) {
-            nameTextView.text = account.accountName
-            nameTextAccountType.text = account.accountType
-            if(account.createdAt.toString().isEmpty() || account.createdAt == null) {
-                textViewCreatedDate.text = ""
+
+            // Set name
+            tvName.text = account.accountName
+
+            // --- SET ICON ---
+            val context = itemView.context
+
+            val iconId = context.resources.getIdentifier(
+                account.iconResName ?: "",
+                "drawable",
+                context.packageName
+            )
+
+            if (iconId != 0) {
+                imgIcon.setImageResource(iconId)
             } else {
-                textViewCreatedDate.text = DateUtil.dateToString(account.createdAt!!)
+                imgIcon.setImageResource(R.drawable.ic_category)
             }
 
+            // --- SET COLOR ---
+            try {
+                imgIcon.setColorFilter((account.color ?: "#000000").toColorInt())
+            } catch (e: Exception) {
+                imgIcon.setColorFilter(Color.GRAY)
+            }
+
+            // Klik item → edit
             itemView.setOnClickListener { onEditClick(account) }
 
-            openMenu.setOnClickListener {
+            // Long press popup
+            tvName.setOnClickListener {
                 showPopupMenu(it, itemView.context, account)
             }
-
         }
-
     }
 
     private fun showPopupMenu(
@@ -74,7 +88,8 @@ class AccountAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_account, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_account, parent, false)
         return AccountViewHolder(view)
     }
 

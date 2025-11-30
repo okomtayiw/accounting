@@ -1,81 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:elevation="4dp"
-    android:layout_marginBottom="8dp"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:gravity="center_vertical"
     android:background="?attr/colorSurface">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <!-- ICON -->
+    <ImageView
+        android:id="@+id/imgCategoryIcon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_category"
+        app:tint="?attr/colorOnSurface" />
+
+    <!-- TITLE -->
+    <TextView
+        android:id="@+id/tvCategoryName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:layout_weight="1"
+        android:text="Market"
+        android:textSize="16sp"
+        android:textColor="?attr/colorOnSurface" />
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/textViewName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="?attr/colorOnSurface"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/arrowIcon"
-            app:layout_constraintHorizontal_bias="0" />
-
-        <!-- Description -->
-        <TextView
-            android:id="@+id/textViewAccountType"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textSize="14sp"
-            android:textColor="?attr/colorOnSurface"
-            app:layout_constraintTop_toBottomOf="@id/textViewName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/arrowIcon" />
-
-        <!-- Balance -->
-        <TextView
-            android:id="@+id/textViewBalance"
-            android:layout_width="0dp"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:text="90000"
-            android:textSize="14sp"
-            android:textColor="?attr/colorOnSurface"
-            app:layout_constraintTop_toBottomOf="@id/textViewAccountType"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/arrowIcon" />
-
-        <!-- Created At -->
-        <TextView
-            android:id="@+id/textViewCreatedDate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Created date"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@id/textViewBalance"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/arrowIcon" />
-
-        <!-- Arrow Icon -->
-        <ImageView
-            android:id="@+id/arrowIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="8dp"
-            android:padding="4dp"
-            android:src="@drawable/dots_vertical"
-            app:tint="?attr/colorOnSurface"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

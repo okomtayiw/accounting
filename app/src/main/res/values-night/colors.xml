@@ -1,22 +1,42 @@
 <resources>
 
-    <color name="purple_500">#BB86FC</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
+    <color name="purple_500">#1073F5</color>
+    <color name="purple_700">#0065D1</color>
+    <color name="teal_200">#B9D8FF</color>
+
+
+
+    <!-- Primary Blue (same tone but darker contrast for night) -->
+    <color name="blue">#0A84FF</color>
+    <color name="blue_pressed">#0065D1</color>
+
+    <!-- Soft blue highlight for selected category -->
+    <color name="blue_secondary">#1E3A5F</color>
+
+    <!-- Background -->
+    <color name="window_bg">#121212</color>     <!-- main dark background -->
+    <color name="surface_card">#1E1E1E</color> <!-- card surface (darker gray) -->
+    <color name="soft_surface">#2A2A2A</color> <!-- inputs / rounded boxes -->
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B4B4B4</color>
+
+    <!-- Icons -->
+    <color name="icon_primary">#E5E5E7</color>
+
+    <!-- Bottom navigation -->
+    <color name="bottom_nav_active">#0A84FF</color>
+    <color name="bottom_nav_inactive">#8E8E93</color>
+
+    <!-- Basics -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <color name="window_bg">#121212</color>
-    <color name="surface_card">#2C2C2C</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#BBBBBB</color>
-    <color name="icon_primary">#DDDDDD</color>
+    <color name="input_bg_dark">#1E1E1E</color>
+    <color name="input_stroke_dark">#333333</color>
 
-
-    <color name="colorBackground">#F5F5F5</color>
-    <color name="colorOnBackground">#000000</color>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="soft_surface">#2A2A2A</color>
+    <color name="tab_text_selected">#FFFFFF</color>
+    <color name="tab_text_unselected">#FFFFFF</color>
 
 </resources>
