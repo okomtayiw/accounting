@@ -5,4 +5,18 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="fragment_horizontal_margin">16dp</dimen>
     <dimen name="fragment_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="col_no">40dp</dimen>
+    <dimen name="col_account">140dp</dimen>
+    <dimen name="col_desc">220dp</dimen>
+    <dimen name="col_debit">120dp</dimen>
+    <dimen name="col_credit">120dp</dimen>
+
+    <dimen name="ledger_table_width">640dp</dimen>
+    <dimen name="category_table_width">520dp</dimen>
+
+    <dimen name="cell_pad_h">8dp</dimen>
+    <dimen name="cell_pad_v">6dp</dimen>
+
 </resources>

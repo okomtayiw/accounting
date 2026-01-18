@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
+    android:id="@+id/cardListJournal"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -14,11 +15,12 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Icon Overflow (Tiga Titik) -->
+        <!-- Icon Overflow -->
         <ImageView
             android:id="@+id/menuButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/description"
             android:src="@drawable/dots_vertical"
             app:tint="?attr/colorOnSurface"
             android:padding="2dp"
@@ -48,14 +50,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Date"
+                    android:text="@string/date"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=":"
+                    android:text="@string/kohlən"
                     android:gravity="center"
                     android:paddingHorizontal="8dp"
                     android:textSize="12sp"
@@ -65,7 +67,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="1734825600000"
+                    android:text="@string/_1734825600000"
                     android:textSize="12sp"
                     android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
@@ -81,14 +83,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Description"
+                    android:text="@string/description"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=":"
+                    android:text="@string/kohlən"
                     android:gravity="center"
                     android:paddingHorizontal="8dp"
                     android:textSize="14sp"
@@ -98,7 +100,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="Balanced Transaction"
+                    android:text="@string/balanced_transaction"
                     android:textSize="14sp"
                     android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
@@ -114,14 +116,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Assets"
+                    android:text="@string/assets"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=":"
+                    android:text="@string/kohlən"
                     android:gravity="center"
                     android:paddingHorizontal="8dp"
                     android:textSize="14sp"
@@ -131,7 +133,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="Account Expense"
+                    android:text="@string/account_expense"
                     android:textSize="14sp"
                     android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
@@ -147,14 +149,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Expenses"
+                    android:text="@string/expenses"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=":"
+                    android:text="@string/kohlən"
                     android:gravity="center"
                     android:paddingHorizontal="8dp"
                     android:textSize="14sp"
@@ -164,7 +166,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="Account name"
+                    android:text="@string/account_name"
                     android:textSize="14sp"
                     android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
@@ -179,14 +181,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Created At"
+                    android:text="@string/created_at"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=":"
+                    android:text="@string/kohlən"
                     android:gravity="center"
                     android:paddingHorizontal="8dp"
                     android:textSize="12sp"
@@ -196,7 +198,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:text="1734847836781"
+                    android:text="@string/_1734847836781"
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary" />
             </LinearLayout>

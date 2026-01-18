@@ -8,7 +8,7 @@
 
     <style name="BottomNavTextStyle" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/teal_200</item>
     </style>
 
     <style name="BottomNavTextStyleInactive" parent="TextAppearance.AppCompat.Caption">

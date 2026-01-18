@@ -1,8 +1,8 @@
 package com.babsnet.accounting.ui.transactions
 
-
 //noinspection SuspiciousImport
 import android.R
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +23,6 @@ import com.babsnet.accounting.repository.AccountRepository
 import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.utils.Utils
-import com.babsnet.accounting.utils.observeOnce
 import com.babsnet.accounting.viewModel.AccountViewModel
 import com.babsnet.accounting.viewModel.TransactionsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -62,16 +61,16 @@ class TransactionsFragment : Fragment() {
         )[AccountViewModel::class.java]
 
         progressBar = binding.progressBar
-        binding.lnAccountName.setOnClickListener {
+        binding.icCategory.setOnClickListener {
             lifecycleScope.launch {
                 val originalAccounts = withContext(Dispatchers.IO) {
                     accountViewModel.getListAccount("Expenses")
                 }
 
                 val allOptions = listOf(
-                    Account(accountId = -1, accountName = "ALL Ledger", accountType = "Report"),
-                    Account(accountId = -2, accountName = "ALL Laba Rugi", accountType = "Report"),
-                    Account(accountId = -3, accountName = "ALL Neraca", accountType = "Report")
+                    Account(accountId = -1, accountName = "Ledger", accountType = "Report"),
+                    Account(accountId = -2, accountName = "Laba Rugi", accountType = "Report"),
+                    Account(accountId = -3, accountName = "Neraca", accountType = "Report")
                 )
 
                 val modifiedAccounts = allOptions + originalAccounts
@@ -81,9 +80,9 @@ class TransactionsFragment : Fragment() {
                     lifecycleScope = viewLifecycleOwner.lifecycleScope,
                     accountViewModel = accountViewModel,
                     accountType = "Expenses",
-                    preloadedAccounts = modifiedAccounts // lewatkan list dari sini
+                    preloadedAccounts = modifiedAccounts
                 ) { selectedAccount ->
-                    binding.inputAccountName.setText(selectedAccount.accountName)
+                    binding.tvCategory.text = selectedAccount.accountName
                     accountId = selectedAccount.accountId
                 }
             }
@@ -92,9 +91,9 @@ class TransactionsFragment : Fragment() {
         val items = listOf("Tahunan", "Bulanan", "Mingguan")
         val adapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerPeriod.adapter = adapter
+        binding.spinnerType.adapter = adapter
 
-        binding.spinnerPeriod.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spinnerType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>, view: View?, position: Int, id: Long
             ) {
@@ -106,7 +105,7 @@ class TransactionsFragment : Fragment() {
             }
         }
 
-        binding.buttonDownloadReport.setOnClickListener {
+        binding.btnShow.setOnClickListener {
             Utils.showLoading(binding.progressBar)
             if (selectedPeriod == null) {
                 Toast.makeText(requireContext(), "Please select data", Toast.LENGTH_SHORT).show()
@@ -114,27 +113,43 @@ class TransactionsFragment : Fragment() {
             }
 
             val (startDate, endDate) = when (selectedPeriod) {
-                "Mingguan" -> Utils.getStartAndEndOfCurrentWeekMillis()
-                "Bulanan" -> Utils.getStartAndEndOfCurrentMonth()
-                "Tahunan" -> Utils.getStartAndEndOfCurrentYear()
+                getString(com.babsnet.accounting.R.string.mingguan) -> Utils.getStartAndEndOfCurrentWeekMillis()
+                getString(com.babsnet.accounting.R.string.bulanan) -> Utils.getStartAndEndOfCurrentMonth()
+                getString(com.babsnet.accounting.R.string.tahunan) -> Utils.getStartAndEndOfCurrentYear()
                 else -> return@setOnClickListener
             }
 
-            transactionsViewModel.getTransactionData(startDate, endDate, accountId)
-                .observeOnce(viewLifecycleOwner) { transactions ->
-                    if (transactions.isEmpty()) {
-                        Toast.makeText(requireContext(), "No data to export", Toast.LENGTH_SHORT).show()
-                    } else {
-                        if(accountId ==  -2) {
-                            Utils.createPdfProfitAndLoss(requireContext(), transactions)
-                        } else if(accountId == -3){
-                            Utils.createPdfBalanceSheet(requireContext(), transactions)
-                        } else {
-                            Utils.createPdf(requireContext(), transactions)
-                        }
 
-                    }
+            if (accountId != null) {
+                if(accountId ==  -2) {
+                    val intent = Intent(requireContext(), ActivityProfitLossPreview::class.java)
+                    intent.putExtra("startDate", startDate)
+                    intent.putExtra("endDate", endDate)
+                    intent.putExtra("accountId", accountId)
+                    startActivity(intent)
+                } else if(accountId == -3) {
+                    val intent = Intent(requireContext(), ActivityBalanceSheetPreview::class.java)
+                    intent.putExtra("startDate", startDate)
+                    intent.putExtra("endDate", endDate)
+                    intent.putExtra("accountId", accountId)
+                    startActivity(intent)
+                }else if(accountId == -1){
+                    val intent = Intent(requireContext(), ActivityTransactionLedgerPreview::class.java)
+                    intent.putExtra("startDate", startDate)
+                    intent.putExtra("endDate", endDate)
+                    intent.putExtra("accountId", accountId)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(requireContext(), ActivityCategoryPreview::class.java)
+                    intent.putExtra("startDate", startDate)
+                    intent.putExtra("endDate", endDate)
+                    intent.putExtra("accountId", accountId)
+                    startActivity(intent)
                 }
+            } else {
+                Toast.makeText(requireContext(), "Please select category", Toast.LENGTH_SHORT).show()
+            }
+
             Utils.hideLoading(binding.progressBar)
         }
         return root

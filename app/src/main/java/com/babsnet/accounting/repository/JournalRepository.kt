@@ -172,4 +172,7 @@ class JournalRepository(
             ledgerDao.getTransactionsBetweenDatesWitAccountId(startDate, endDate, accountId)
         }
     }
+
+    fun searchJournalsByRange(start: Long, end: Long, query: String) =
+        journalDao.searchJournalsWithDetailsWithinDateRange(start, end, query)
 }

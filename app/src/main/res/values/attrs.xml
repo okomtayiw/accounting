@@ -3,4 +3,5 @@
     <attr name="colorInputBackground" format="color"/>
     <attr name="colorInputStroke" format="color"/>
     <attr name="tabUnselectedTextColor" format="color"/>
+    <attr name="colorSurface" format="color"/>
 </resources>
