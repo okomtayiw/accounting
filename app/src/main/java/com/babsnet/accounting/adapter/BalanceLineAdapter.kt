@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.BalanceLine
+import com.babsnet.accounting.utils.AccountLocalizationUtil
 
 class BalanceLineAdapter(
     private val formatNumber: (Double) -> String
@@ -35,8 +36,8 @@ class BalanceLineAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        holder.tvLeft.text = item.title
-        holder.tvSub.text = item.accountType
+        holder.tvLeft.text = AccountLocalizationUtil.localizeAccountName(holder.itemView.context, item.title)
+        holder.tvSub.text = AccountLocalizationUtil.localizeAccountType(holder.itemView.context, item.accountType)
         holder.tvRight.text = formatNumber(item.amount)
     }
 

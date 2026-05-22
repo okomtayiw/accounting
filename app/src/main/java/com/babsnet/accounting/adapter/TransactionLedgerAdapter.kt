@@ -8,13 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.TransactionData
+import com.babsnet.accounting.utils.AccountLocalizationUtil
+import com.babsnet.accounting.utils.CurrencyFormatUtil
 import com.babsnet.accounting.utils.DateUtil
-import java.text.DecimalFormat
 
 class TransactionLedgerAdapter : RecyclerView.Adapter<TransactionLedgerAdapter.ViewHolder>() {
 
     private val items = mutableListOf<TransactionData>()
-    private val decimalFormat = DecimalFormat("#,###.##")
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitData(list: List<TransactionData>) {
@@ -42,12 +42,16 @@ class TransactionLedgerAdapter : RecyclerView.Adapter<TransactionLedgerAdapter.V
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.tvNo.text = (position + 1).toString()
-        holder.tvAccount.text = item.accountName
+        holder.tvAccount.text = AccountLocalizationUtil.localizeAccountName(holder.itemView.context, item.accountName)
         val dateStr = DateUtil.dateToString(item.journalDate, "dd MMM yyyy")
         holder.tvDate.text = dateStr
         holder.tvDesc.text = item.description
-        holder.tvDebit.text = if (item.debit != 0.0) decimalFormat.format(item.debit) else ""
-        holder.tvCredit.text = if (item.credit != 0.0) decimalFormat.format(item.credit) else ""
+        holder.tvDebit.text = if (item.debit != 0.0) {
+            CurrencyFormatUtil.formatCurrency(holder.itemView.context, item.debit)
+        } else ""
+        holder.tvCredit.text = if (item.credit != 0.0) {
+            CurrencyFormatUtil.formatCurrency(holder.itemView.context, item.credit)
+        } else ""
     }
 
     override fun getItemCount(): Int = items.size

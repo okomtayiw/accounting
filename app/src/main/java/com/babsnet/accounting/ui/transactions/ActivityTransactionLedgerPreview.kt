@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.TransactionLedgerAdapter
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.dao.JournalDao
@@ -13,11 +14,12 @@ import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.TransactionData
 import com.babsnet.accounting.databinding.ActivityTransactionLedgerPreviewBinding
 import com.babsnet.accounting.repository.JournalRepository
+import com.babsnet.accounting.utils.CurrencyFormatUtil
 import com.babsnet.accounting.utils.GenericViewModelFactory
+import com.babsnet.accounting.utils.LanguagePreference
 import com.babsnet.accounting.utils.SystemBarsHelper
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.TransactionsViewModel
-import java.text.DecimalFormat
 
 class ActivityTransactionLedgerPreview : AppCompatActivity() {
 
@@ -25,6 +27,10 @@ class ActivityTransactionLedgerPreview : AppCompatActivity() {
     private lateinit var viewModel: TransactionsViewModel
     private lateinit var adapter: TransactionLedgerAdapter
     private var currentTx: List<TransactionData> = emptyList()
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LanguagePreference.wrapContext(newBase))
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +54,7 @@ class ActivityTransactionLedgerPreview : AppCompatActivity() {
 
         binding.btnGeneratePdf.setOnClickListener {
             if (currentTx.isEmpty()) {
-                Toast.makeText(this, "Tidak ada data transaksi.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.toast_empty_transactions), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             Utils.createLedgerPdf(this, currentTx)
@@ -69,8 +75,14 @@ class ActivityTransactionLedgerPreview : AppCompatActivity() {
 
             val totalDebit = tx.sumOf { it.debit }
             val totalCredit = tx.sumOf { it.credit }
-            binding.tvTotalDebit.text = "Total Debit: ${DecimalFormat("#,###").format(totalDebit)}"
-            binding.tvTotalCredit.text = "Total Credit: ${DecimalFormat("#,###").format(totalCredit)}"
+            binding.tvTotalDebit.text = getString(
+                R.string.label_total_debit,
+                CurrencyFormatUtil.formatCurrency(this, totalDebit)
+            )
+            binding.tvTotalCredit.text = getString(
+                R.string.label_total_credit,
+                CurrencyFormatUtil.formatCurrency(this, totalCredit)
+            )
         }
     }
 

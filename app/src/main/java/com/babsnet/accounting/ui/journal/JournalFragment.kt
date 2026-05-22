@@ -1,11 +1,13 @@
 package com.babsnet.accounting.ui.journal
 
 import android.os.Bundle
-import android.view.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuProvider
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.babsnet.accounting.R
@@ -31,49 +33,24 @@ class JournalFragment : Fragment() {
         setupViewModel()
         _binding = FragmentJournalBinding.inflate(inflater, container, false)
 
-        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.customToolbar)
+        val drawerLayout = activity?.findViewById<DrawerLayout>(R.id.drawer_layout)
+        binding.btnMenu.setOnClickListener {
+            drawerLayout?.openDrawer(GravityCompat.START)
+        }
 
-        val adapter = JournalPagerAdapter(this)
-        binding.viewPagerJournal.adapter = adapter
+        binding.viewPagerJournal.adapter = JournalPagerAdapter(this)
 
         TabLayoutMediator(binding.tabLayout, binding.viewPagerJournal) { tab, position ->
             tab.text = when (position) {
-                0 -> "Weekly"
-                1 -> "Monthly"
-                else -> "Annual"
+                0 -> getString(R.string.weekly)
+                1 -> getString(R.string.monthly)
+                else -> getString(R.string.yearly)
             }
         }.attach()
 
-        // MENU PROVIDER
-        requireActivity().addMenuProvider(object : MenuProvider {
-
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.header_menu, menu)
-
-                val searchItem = menu.findItem(R.id.action_search)
-                val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
-
-                searchView.queryHint = "Search journal..."
-
-                searchView.setOnQueryTextListener(object :
-                    androidx.appcompat.widget.SearchView.OnQueryTextListener {
-
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        journalViewModel.setSearch(query.orEmpty())
-                        return true
-                    }
-
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        journalViewModel.setSearch(newText.orEmpty())
-                        return true
-                    }
-                })
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        binding.editSearchJournal.doAfterTextChanged { text ->
+            journalViewModel.setSearch(text?.toString().orEmpty())
+        }
 
         binding.fabAddAccountJournal.setOnClickListener {
             findNavController().navigate(R.id.addEditJournalFragment)
@@ -95,5 +72,4 @@ class JournalFragment : Fragment() {
             GenericViewModelFactory(JournalViewModel::class.java) { JournalViewModel(repo) }
         )[JournalViewModel::class.java]
     }
-
 }

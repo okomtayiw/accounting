@@ -2,12 +2,12 @@
     android:shape="oval">
 
     <stroke
-        android:width="3dp"
-        android:color="@color/blue" />
+        android:width="2dp"
+        android:color="@color/nav_active_text" />
 
     <size
-        android:width="48dp"
-        android:height="48dp" />
+        android:width="38dp"
+        android:height="38dp" />
 
     <solid android:color="@android:color/transparent" />
 </shape>

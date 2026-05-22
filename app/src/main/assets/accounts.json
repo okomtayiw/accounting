@@ -1,9 +1,9 @@
 [
   {
     "accountId": 1,
-    "accountName": "Kas",
+    "accountName": "Cash",
     "accountType": "Assets",
-    "description": "Uang tunai yang dimiliki",
+    "description": "Cash on hand",
     "icon_res_name": "ic_wallet",
     "icon_color": "#FF8EE700"
   },
@@ -11,88 +11,160 @@
     "accountId": 2,
     "accountName": "Bank",
     "accountType": "Assets",
-    "description": "Uang yang tersimpan di rekening bank",
+    "description": "Money stored in a bank account",
     "icon_res_name": "ic_bank",
     "icon_color": "#FF5D81F7"
   },
   {
     "accountId": 3,
-    "accountName": "Belanja Harian",
+    "accountName": "Daily Shopping",
     "accountType": "Expenses",
-    "description": "Pengeluaran kecil seperti makanan & transportasi",
+    "description": "Small expenses such as food and transportation",
     "icon_res_name": "ic_shopping",
     "icon_color": "#FFFF9A00"
   },
   {
     "accountId": 4,
-    "accountName": "Sewa",
+    "accountName": "Rent",
     "accountType": "Expenses",
-    "description": "Biaya sewa tempat tinggal atau kantor",
+    "description": "Rent cost for a house or office",
     "icon_res_name": "ic_house",
     "icon_color": "#FF4CD4B0"
   },
   {
     "accountId": 5,
-    "accountName": "Tagihan Listrik",
+    "accountName": "Electricity Bill",
     "accountType": "Expenses",
-    "description": "Pengeluaran untuk listrik",
+    "description": "Electricity expenses",
     "icon_res_name": "ic_electricity",
     "icon_color": "#FFFF4E4E"
   },
   {
     "accountId": 6,
-    "accountName": "Tagihan Air",
+    "accountName": "Water Bill",
     "accountType": "Expenses",
-    "description": "Biaya bulanan untuk air",
+    "description": "Monthly water bill",
     "icon_res_name": "ic_invoice",
     "icon_color": "#FF0094FF"
   },
   {
     "accountId": 7,
-    "accountName": "Biaya Internet & Telepon",
+    "accountName": "Internet & Phone",
     "accountType": "Expenses",
-    "description": "Pembayaran internet & telepon",
+    "description": "Internet and phone payments",
     "icon_res_name": "ic_phone",
     "icon_color": "#FF8D7B6A"
   },
   {
     "accountId": 8,
-    "accountName": "Asuransi",
+    "accountName": "Insurance",
     "accountType": "Expenses",
-    "description": "Premi asuransi kesehatan, kendaraan, dll.",
+    "description": "Insurance premiums for health, vehicles, and more",
     "icon_res_name": "ic_assurance",
     "icon_color": "#FFFF6D6D"
   },
   {
     "accountId": 9,
-    "accountName": "Cicilan Kendaraan",
+    "accountName": "Vehicle Installment",
     "accountType": "Expenses",
-    "description": "Pembayaran angsuran mobil/motor",
+    "description": "Car or motorcycle installment payments",
     "icon_res_name": "ic_credit",
     "icon_color": "#FF227AF0"
   },
   {
     "accountId": 10,
-    "accountName": "Hiburan",
+    "accountName": "Entertainment",
     "accountType": "Expenses",
-    "description": "Pengeluaran untuk film, game, dll.",
+    "description": "Expenses for movies, games, and more",
     "icon_res_name": "ic_stars",
     "icon_color": "#FFFFD600"
   },
   {
     "accountId": 11,
-    "accountName": "Pendidikan",
+    "accountName": "Education",
     "accountType": "Expenses",
-    "description": "Biaya sekolah, kursus, atau buku",
+    "description": "Expenses for school, courses, or books",
     "icon_res_name": "ic_school",
     "icon_color": "#FFB09EFF"
   },
   {
     "accountId": 12,
-    "accountName": "Pendapatan",
+    "accountName": "Income",
     "accountType": "Income",
-    "description": "Pendapatan utama",
+    "description": "Main source of income",
     "icon_res_name": "ic_income",
-    "icon_color": "#FFFFFFFF"
+    "icon_color": "#FFFFD600"
+  },
+  {
+    "accountId": 13,
+    "accountName": "Food & Drinks",
+    "accountType": "Expenses",
+    "description": "Daily meals, snacks, coffee, and drinks",
+    "icon_res_name": "ic_food",
+    "icon_color": "#FFFF9A00"
+  },
+  {
+    "accountId": 14,
+    "accountName": "Transportation",
+    "accountType": "Expenses",
+    "description": "Public transport, fuel, parking, and ride-hailing",
+    "icon_res_name": "ic_gas",
+    "icon_color": "#FF5D81F7"
+  },
+  {
+    "accountId": 15,
+    "accountName": "Health",
+    "accountType": "Expenses",
+    "description": "Medicine, doctor visits, and health-related expenses",
+    "icon_res_name": "ic_assurance",
+    "icon_color": "#FFFF6D6D"
+  },
+  {
+    "accountId": 16,
+    "accountName": "Personal Care",
+    "accountType": "Expenses",
+    "description": "Toiletries, grooming, laundry, and self-care items",
+    "icon_res_name": "ic_stars",
+    "icon_color": "#FFB09EFF"
+  },
+  {
+    "accountId": 17,
+    "accountName": "Savings",
+    "accountType": "Assets",
+    "description": "Money set aside for savings goals",
+    "icon_res_name": "ic_bank",
+    "icon_color": "#FF4CD4B0"
+  },
+  {
+    "accountId": 18,
+    "accountName": "Emergency Fund",
+    "accountType": "Assets",
+    "description": "Reserved funds for emergencies and unexpected needs",
+    "icon_res_name": "ic_wallet",
+    "icon_color": "#FF8EE700"
+  },
+  {
+    "accountId": 19,
+    "accountName": "Salary",
+    "accountType": "Income",
+    "description": "Primary salary or monthly wage",
+    "icon_res_name": "ic_income",
+    "icon_color": "#FF5DD0FF"
+  },
+  {
+    "accountId": 20,
+    "accountName": "Freelance Income",
+    "accountType": "Income",
+    "description": "Income from freelance work or side projects",
+    "icon_res_name": "ic_credit_card",
+    "icon_color": "#FF227AF0"
+  },
+  {
+    "accountId": 21,
+    "accountName": "Other Income",
+    "accountType": "Income",
+    "description": "Additional income outside the main salary",
+    "icon_res_name": "ic_invoice",
+    "icon_color": "#FFFFD600"
   }
 ]

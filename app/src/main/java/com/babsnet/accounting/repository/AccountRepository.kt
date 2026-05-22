@@ -43,29 +43,52 @@ data class AccountRepository(private val accountDao:AccountDao,
 
 
     suspend fun insertDefaultAccounts(context: Context) {
-        if (accountDao.countAccounts() == 0) {
-            val jsonString = loadJSONFromAsset(context, "accounts.json")
-            val jsonArray = JSONArray(jsonString)
-            val accounts = mutableListOf<Account>()
+        val jsonString = loadJSONFromAsset(context, "accounts.json")
+        val jsonArray = JSONArray(jsonString)
+        val existingAccounts = accountDao.getAllAccountsSnapshot().associateBy { it.accountId }
+        val accountsToInsert = mutableListOf<Account>()
+        val accountsToUpdate = mutableListOf<Account>()
 
-            for (i in 0 until jsonArray.length()) {
-                val jsonObject = jsonArray.getJSONObject(i)
-                val account = Account(
-                    accountId = jsonObject.getInt("accountId"),
-                    accountName = jsonObject.getString("accountName"),
-                    accountType = jsonObject.getString("accountType"),
-                    color = jsonObject.getString("icon_color"),
-                    iconResName = jsonObject.getString("icon_res_name"),
-                    balance = 0.0,
-                    createdAt = Date(),
-                    createdBy = "System"
-                )
-                accounts.add(account)
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val defaultAccount = Account(
+                accountId = jsonObject.getInt("accountId"),
+                accountName = jsonObject.getString("accountName"),
+                accountType = jsonObject.getString("accountType"),
+                color = jsonObject.getString("icon_color"),
+                iconResName = jsonObject.getString("icon_res_name"),
+                balance = 0.0,
+                createdAt = Date(),
+                createdBy = "System"
+            )
+
+            val existing = existingAccounts[defaultAccount.accountId]
+            when {
+                existing == null -> {
+                    accountsToInsert.add(defaultAccount)
+                }
+                shouldRefreshSystemAccount(existing) -> {
+                    existing.accountName = defaultAccount.accountName
+                    existing.accountType = defaultAccount.accountType
+                    existing.color = defaultAccount.color
+                    existing.iconResName = defaultAccount.iconResName
+                    accountsToUpdate.add(existing)
+                }
             }
-            accountDao.insertAll(accounts)
         }
+
+        if (accountsToInsert.isNotEmpty()) {
+            accountDao.insertAll(accountsToInsert)
+        }
+
+        accountsToUpdate.forEach { accountDao.update(it) }
     }
 
+    private fun shouldRefreshSystemAccount(account: Account): Boolean {
+        return account.createdBy == "System" &&
+            account.updatedAt == null &&
+            account.updatedBy.isNullOrBlank()
+    }
 
     private fun loadJSONFromAsset(context: Context, fileName: String): String {
         return try {

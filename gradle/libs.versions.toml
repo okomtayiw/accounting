@@ -46,7 +46,8 @@ androidx-room-ktx-v252 = { module = "androidx.room:room-ktx", version.ref = "roo
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 core = { module = "com.google.ar:core", version.ref = "core" }
 google-material-v1100 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
-itext7-core = { module = "com.itextpdf:itext7-core", version.ref = "itext7Core" }
+itext7-kernel = { module = "com.itextpdf:kernel", version.ref = "itext7Core" }
+itext7-layout = { module = "com.itextpdf:layout", version.ref = "itext7Core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

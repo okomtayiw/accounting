@@ -2,10 +2,9 @@ package com.babsnet.accounting.ui.account
 
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -14,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.ColorAdapter
@@ -29,13 +29,12 @@ import com.babsnet.accounting.utils.GridSpacingItemDecoration
 import com.babsnet.accounting.utils.IconProvider
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.AccountViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.util.Date
-import androidx.core.graphics.toColorInt
 
 class AccountInputFragment : Fragment() {
 
@@ -97,15 +96,16 @@ class AccountInputFragment : Fragment() {
     private fun setupUI() {
         setupColorAdapter()
 
-        allIcons = IconProvider.getIcons()
+        allIcons = IconProvider.getIcons(requireContext())
         iconAdapter = IconAdapter(allIcons) { selected ->
             selectedIcon = selected.key
+            binding.tvSelectedIconName.text = selected.displayName
         }
         binding.rvIcons.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.rvIcons.adapter = iconAdapter
 
-        val spacing = Utils.dpToPx(requireContext(), 8)
-        binding.rvIcons.addItemDecoration(GridSpacingItemDecoration(2, spacing))
+        val spacing = Utils.dpToPx(requireContext(), 10)
+        binding.rvIcons.addItemDecoration(GridSpacingItemDecoration(4, spacing))
 
         binding.searchIcon.addTextChangedListener {
             iconAdapter.filter(it.toString())
@@ -118,6 +118,7 @@ class AccountInputFragment : Fragment() {
             accountTypes
         )
         binding.autoCompleteTypeAccount.adapter = spinnerAdapter
+        binding.autoCompleteTypeAccount.setSelection(1)
 
 
         val accountId = arguments?.getInt("accountId")
@@ -125,10 +126,10 @@ class AccountInputFragment : Fragment() {
             binding.toolbarTitle.text = getString(R.string.edit_account)
 
             accountViewModel.getAccountById(accountId).observe(viewLifecycleOwner) { account ->
-                currentAccount = account
+                currentAccount = account ?: return@observe
 
                 // nama
-                binding.editTextAccountName.setText(account!!.accountName)
+                binding.editTextAccountName.setText(account.accountName)
 
                 // spinner
                 val index = accountTypes.indexOf(account.accountType)
@@ -137,12 +138,28 @@ class AccountInputFragment : Fragment() {
                 // ICON SELECTED
                 selectedIcon = account.iconResName.toString()
                 iconAdapter.setSelectedIcon(selectedIcon)
+                binding.tvSelectedIconName.text =
+                    allIcons.firstOrNull { it.key == selectedIcon }?.displayName
+                        ?: getString(R.string.selected_icon)
 
                 account.color.let { hex ->
                     colorAdapter.setSelectedColor(hex)
+                    selectedColor = try {
+                        Color.parseColor(hex)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
 
             }
+        }
+
+        if (selectedIcon.isBlank()) {
+            selectedIcon = allIcons.firstOrNull()?.key.orEmpty()
+            iconAdapter.setSelectedIcon(selectedIcon)
+            binding.tvSelectedIconName.text =
+                allIcons.firstOrNull { it.key == selectedIcon }?.displayName
+                    ?: getString(R.string.selected_icon)
         }
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
@@ -153,14 +170,27 @@ class AccountInputFragment : Fragment() {
     private fun saveAccount() {
         val name = binding.editTextAccountName.text.toString()
         val type = binding.autoCompleteTypeAccount.selectedItem?.toString() ?: ""
+        val colorHex = selectedColor?.let {
+            String.format("#%06X", 0xFFFFFF and it)
+        } ?: currentAccount?.color
+        val resNameValue = selectedIcon.takeIf { it.isNotBlank() }
+            ?: allIcons.firstOrNull()?.key.orEmpty()
 
         // Validate account name
         if (name.isBlank()) {
-            Toast.makeText(requireContext(), "Account Name cannot be empty", Toast.LENGTH_SHORT).show()
+            showValidationWarning(getString(R.string.validation_account_name_empty))
             return
         }
 
+        if (resNameValue.isBlank()) {
+            showValidationWarning(getString(R.string.validation_select_icon))
+            return
+        }
 
+        if (colorHex.isNullOrBlank()) {
+            showValidationWarning(getString(R.string.validation_select_color))
+            return
+        }
 
         Utils.showLoading(binding.progressBar)
         CoroutineScope(Dispatchers.Main).launch {
@@ -168,46 +198,27 @@ class AccountInputFragment : Fragment() {
 
             val now = Date()
 
-            val colorHex = selectedColor?.let {
-                String.format("#%06X", 0xFFFFFF and it)
-            } ?: currentAccount?.color
-
-            val resNameValue = selectedIcon.takeIf { it.isNotBlank() }
-                ?: allIcons.first().key
-
-            if (currentAccount == null && resNameValue.isEmpty()) {
-                Toast.makeText(requireContext(), "Please select a icon", Toast.LENGTH_SHORT).show()
-                Utils.hideLoading(binding.progressBar)
-                return@launch
-            }
-
-            if (currentAccount == null && colorHex == null) {
-                Toast.makeText(requireContext(), "Please select a color", Toast.LENGTH_SHORT).show()
-                Utils.hideLoading(binding.progressBar)
-                return@launch
-            }
-
             val account = currentAccount?.copy(
                 accountName = name,
                 accountType = type,
-                color = colorHex!!,
+                color = colorHex,
                 iconResName = resNameValue
             ) ?: Account(
                 accountName = name,
                 accountType = type,
                 balance = 0.0,
-                color = colorHex!!,
+                color = colorHex,
                 iconResName  = resNameValue
             )
 
             if (currentAccount == null) {
                 account.createdAt = now
                 accountViewModel.insert(account)
-                Toast.makeText(requireContext(), "Account added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.toast_account_added), Toast.LENGTH_SHORT).show()
             } else {
                 account.updatedAt = now
                 accountViewModel.update(account)
-                Toast.makeText(requireContext(), "Account updated successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.toast_account_updated), Toast.LENGTH_SHORT).show()
             }
 
             Utils.hideLoading(binding.progressBar)
@@ -239,8 +250,23 @@ class AccountInputFragment : Fragment() {
             selectedColor = selected
         }
 
-        binding.rvColors.layoutManager = GridLayoutManager(requireContext(), 6)
+        binding.rvColors.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvColors.adapter = colorAdapter
+    }
+
+    private fun showValidationWarning(message: String) {
+        val snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT)
+        snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+        val layout = snackbar.view as Snackbar.SnackbarLayout
+        layout.setPadding(24, 0, 24, 28)
+
+        val customView = layoutInflater.inflate(R.layout.view_warning_snackbar, null)
+        customView.findViewById<TextView>(R.id.tvWarningMessage).text = message
+
+        layout.removeAllViews()
+        layout.addView(customView)
+        snackbar.show()
     }
 
 

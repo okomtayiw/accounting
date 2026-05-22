@@ -3,13 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp"
     android:background="@drawable/item_account_selector">
 
     <TextView
         android:id="@+id/tvAccountName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingTop="11dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="11dp"
+        android:fontFamily="sans-serif"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="16sp"/>
+        android:textSize="15sp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/category_divider" />
 </LinearLayout>

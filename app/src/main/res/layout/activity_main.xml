@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
-    android:background="?android:colorBackground"
+    android:background="@color/category_screen_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:colorBackground">
+        android:background="@color/category_screen_bg">
 
         <!-- NAV HOST -->
         <androidx.fragment.app.FragmentContainerView
@@ -22,7 +22,7 @@
             android:layout_height="0dp"
             app:navGraph="@navigation/mobile_navigation"
             app:defaultNavHost="true"
-            android:background="?android:colorBackground"
+            android:background="@color/category_screen_bg"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/nav_view"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,13 +32,13 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:background="?attr/colorSurface"
-            app:itemIconTint="?attr/colorOnSurface"
-            app:itemTextColor="?attr/colorOnSurface"
+            android:layout_height="54dp"
+            android:minHeight="54dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:background="@color/category_nav_bg"
             app:labelVisibilityMode="labeled"
+            app:itemHorizontalTranslationEnabled="false"
             app:menu="@menu/bottom_nav_menu"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,15 +48,49 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- DRAWER MENU -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="304dp"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_gravity="start"
-        app:itemTextColor="?attr/colorOnSurface"
-        app:itemIconTint="?attr/colorOnSurface"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu" />
+        android:background="@drawable/drawer_panel_bg">
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:paddingTop="6dp"
+            android:paddingBottom="64dp"
+            app:headerLayout="@layout/nav_header"
+            app:itemBackground="@drawable/drawer_item_bg"
+            app:itemHorizontalPadding="18dp"
+            app:itemIconPadding="16dp"
+            app:itemIconSize="20dp"
+            app:itemTextAppearance="@style/DrawerItemTextStyle"
+            app:itemTextColor="@color/drawer_item_text_colors"
+            app:itemIconTint="@color/drawer_item_icon_colors"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/drawer_menu" />
+
+        <TextView
+            android:id="@+id/tvDrawerVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@color/drawer_text_secondary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

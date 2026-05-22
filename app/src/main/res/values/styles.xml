@@ -1,19 +1,45 @@
 <resources>
     <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
-        <item name="itemIconSize">24dp</item>
+        <item name="itemIconSize">15dp</item>
         <item name="itemTextAppearanceActive">@style/BottomNavTextStyle</item>
         <item name="itemTextAppearanceInactive">@style/BottomNavTextStyleInactive</item>
-        <item name="android:background">?attr/colorSurface</item>
+        <item name="android:background">@color/category_nav_bg</item>
+        <item name="itemIconTint">@color/bottom_nav_colors</item>
+        <item name="itemTextColor">@color/bottom_nav_colors</item>
+        <item name="itemActiveIndicatorStyle">@style/BottomNavActiveIndicatorStyle</item>
+        <item name="itemRippleColor">@android:color/transparent</item>
+        <item name="itemPaddingTop">5dp</item>
+        <item name="itemPaddingBottom">4dp</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="BottomNavTextStyle" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/teal_200</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/nav_active_text</item>
     </style>
 
     <style name="BottomNavTextStyleInactive" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">@color/nav_inactive_text</item>
+    </style>
+
+    <style name="BottomNavActiveIndicatorStyle">
+        <item name="android:width">40dp</item>
+        <item name="android:height">26dp</item>
+        <item name="android:color">@color/nav_active_bg</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.BottomNav.Active</item>
+    </style>
+
+    <style name="ShapeAppearance.BottomNav.Active" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="DrawerItemTextStyle" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 </resources>
 

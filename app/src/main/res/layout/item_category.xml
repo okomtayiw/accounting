@@ -5,30 +5,30 @@
     android:id="@+id/layoutCategory"
     android:layout_width="match_parent"
     android:layout_height="96dp"
-    android:background="@drawable/bg_category_unselected"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:gravity="center"
     android:layout_margin="6dp"
-    android:foreground="?attr/selectableItemBackgroundBorderless">
+    android:background="@drawable/journal_category_card_bg"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="12dp">
 
     <ImageView
         android:id="@+id/imgCategory"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:src="@drawable/ic_dashboard_black_24dp"
-        app:tint="?attr/colorOnSurface" />
+        app:tint="@color/text_primary" />
 
     <TextView
         android:id="@+id/tvCategoryName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/category"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="13sp"
         android:layout_marginTop="8dp"
-        android:maxLines="2"
         android:ellipsize="end"
-        android:textAlignment="center" />
+        android:maxLines="2"
+        android:text="@string/category"
+        android:textAlignment="center"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp" />
 
 </LinearLayout>

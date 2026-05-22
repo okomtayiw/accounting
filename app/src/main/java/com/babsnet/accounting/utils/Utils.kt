@@ -3,22 +3,23 @@ package com.babsnet.accounting.utils
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.annotation.AttrRes
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +31,6 @@ import com.babsnet.accounting.data.entity.TransactionData
 import com.babsnet.accounting.viewModel.AccountViewModel
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.itextpdf.kernel.colors.DeviceGray
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -40,7 +40,6 @@ import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.property.BorderRadius
 import com.itextpdf.layout.property.TextAlignment
 import com.itextpdf.layout.property.UnitValue
 import jxl.Workbook
@@ -51,8 +50,6 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
-import java.math.RoundingMode
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -64,10 +61,72 @@ import java.util.Locale
 
 object Utils {
 
+    private fun showDownloadSuccessDialog(
+        context: Context,
+        fileLabel: String,
+        fileName: String,
+        mimeType: String,
+        file: File? = null,
+        fileUri: Uri? = null,
+        locationLabel: String = context.getString(R.string.download_location_downloads)
+    ) {
+        val safeUri = fileUri ?: file?.let {
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                it
+            )
+        }
+
+        MaterialAlertDialogBuilder(context)
+            .setTitle(context.getString(R.string.download_success_title))
+            .setMessage(
+                context.getString(
+                    R.string.download_success_message,
+                    fileLabel,
+                    fileName,
+                    locationLabel
+                )
+            )
+            .setNegativeButton(context.getString(R.string.close), null)
+            .setNeutralButton(context.getString(R.string.share)) { _, _ ->
+                if (safeUri == null) {
+                    Toast.makeText(context, context.getString(R.string.error_file_not_found_share), Toast.LENGTH_SHORT).show()
+                    return@setNeutralButton
+                }
+
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = mimeType
+                    putExtra(Intent.EXTRA_STREAM, safeUri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_file_chooser)))
+            }
+            .setPositiveButton(context.getString(R.string.view_file)) { _, _ ->
+                if (safeUri == null) {
+                    Toast.makeText(context, context.getString(R.string.error_file_not_found_open), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val viewIntent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(safeUri, mimeType)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+
+                try {
+                    context.startActivity(viewIntent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, context.getString(R.string.error_no_viewer_app), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .show()
+    }
+
 
     fun showLoading(progressBar: ProgressBar) {
+        (progressBar.parent as? View)?.visibility = View.VISIBLE
         progressBar.visibility = View.VISIBLE
-
     }
 
     fun dpToPx(context: Context, dp: Int): Int {
@@ -78,7 +137,18 @@ object Utils {
     fun hideLoading(progressBar: ProgressBar) {
         Handler(Looper.getMainLooper()).postDelayed({
             progressBar.visibility = View.GONE
+            (progressBar.parent as? View)?.visibility = View.GONE
         }, 3000)
+    }
+
+    private fun currentLocale(context: Context): Locale {
+        val configuration = context.resources.configuration
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            configuration.locales[0]
+        } else {
+            @Suppress("DEPRECATION")
+            configuration.locale
+        }
     }
 
     fun showDeleteConfirmationDialog(
@@ -86,10 +156,10 @@ object Utils {
         onConfirm: () -> Unit
     ) {
         val dialog = MaterialAlertDialogBuilder(context)
-            .setTitle("Delete Confirmation")
-            .setMessage("Are you sure you want to delete this data?")
-            .setPositiveButton("Yes", null)
-            .setNegativeButton("No", null)
+            .setTitle(context.getString(R.string.delete_confirmation))
+            .setMessage(context.getString(R.string.delete_confirmation_message))
+            .setPositiveButton(context.getString(R.string.yes), null)
+            .setNegativeButton(context.getString(R.string.no), null)
             .create()
 
         dialog.setOnShowListener {
@@ -152,6 +222,7 @@ object Utils {
             .setView(dialogView)
             .setCancelable(true)
             .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerViewAccounts)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -256,10 +327,17 @@ object Utils {
 
         try {
             val workbook = Workbook.createWorkbook(file)
-            val sheet = workbook.createSheet("Transactions", 0)
+            val sheet = workbook.createSheet(context.getString(R.string.export_sheet_transactions), 0)
 
             // Header
-            val headers = listOf("No", "Date", "Account Name", "Description", "Debit", "Credit")
+            val headers = listOf(
+                context.getString(R.string.number_short),
+                context.getString(R.string.date),
+                context.getString(R.string.account_name),
+                context.getString(R.string.description),
+                context.getString(R.string.debit),
+                context.getString(R.string.credit)
+            )
             headers.forEachIndexed { index, value ->
                 sheet.addCell(Label(index, 0, value))
             }
@@ -280,7 +358,7 @@ object Utils {
             }
 
             val totalRow = transactionData.size + 1
-            sheet.addCell(Label(3, totalRow, "Total"))
+            sheet.addCell(Label(3, totalRow, context.getString(R.string.total)))
             sheet.addCell(Label(4, totalRow, totalDebit.toString()))
             sheet.addCell(Label(5, totalRow, totalCredit.toString()))
 
@@ -288,10 +366,20 @@ object Utils {
             workbook.write()
             workbook.close()
 
-            Toast.makeText(context, "Excel (XLS) saved in Download folder: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+            showDownloadSuccessDialog(
+                context = context,
+                fileLabel = context.getString(R.string.file_label_excel),
+                fileName = file.name,
+                mimeType = "application/vnd.ms-excel",
+                file = file
+            )
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Failed to create Excel: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.failed_create_excel, e.message),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -304,7 +392,14 @@ object Utils {
             val writer = BufferedWriter(FileWriter(file))
 
             // Header
-            writer.append("No,Date,Account Name,Description,Debit,Credit\n")
+            writer.append(
+                "${context.getString(R.string.number_short)}," +
+                    "${context.getString(R.string.date)}," +
+                    "${context.getString(R.string.account_name)}," +
+                    "${context.getString(R.string.description)}," +
+                    "${context.getString(R.string.debit)}," +
+                    "${context.getString(R.string.credit)}\n"
+            )
 
             // Data
             var totalDebit = 0.0
@@ -316,15 +411,25 @@ object Utils {
                 totalCredit += row[4].toDouble()
             }
 
-            writer.append(",,Total,,${totalDebit},${totalCredit}\n")
+            writer.append(",,${context.getString(R.string.total)},,${totalDebit},${totalCredit}\n")
 
             writer.flush()
             writer.close()
 
-            Toast.makeText(context, "CSV saved in Download folder: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+            showDownloadSuccessDialog(
+                context = context,
+                fileLabel = context.getString(R.string.file_label_csv),
+                fileName = file.name,
+                mimeType = "text/csv",
+                file = file
+            )
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Failed to create CSV: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.failed_create_csv, e.message),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -338,7 +443,7 @@ object Utils {
             val pdfWriter = PdfWriter(file)
             val pdfDocument = PdfDocument(pdfWriter)
             val document = Document(pdfDocument)
-            val title = Paragraph("Transaction Ledger")
+            val title = Paragraph(context.getString(R.string.transaction_ledger_preview))
                 .setBold()
                 .setFontSize(16f)
                 .setTextAlignment(TextAlignment.CENTER)
@@ -348,41 +453,51 @@ object Utils {
             val table = Table(UnitValue.createPercentArray(columnWidths))
             table.setWidth(UnitValue.createPercentValue(100f))
 
-            val headers = listOf("No", "Date", "Account Name", "Description", "Debit", "Credit")
+            val headers = listOf(
+                context.getString(R.string.number_short),
+                context.getString(R.string.date),
+                context.getString(R.string.account_name),
+                context.getString(R.string.description),
+                context.getString(R.string.debit),
+                context.getString(R.string.credit)
+            )
             headers.forEach {
                 table.addHeaderCell(Cell().add(Paragraph(it).setBold()))
             }
 
             var totalDebit = 0.0
             var totalCredit = 0.0
-            val decimalFormat = DecimalFormat("#,###.##").apply {
-                roundingMode = RoundingMode.DOWN
-            }
 
             transactionData.forEachIndexed { index, row ->
                 table.addCell(Cell().add(Paragraph((index + 1).toString()))) // Nomor urut
                 table.addCell(Cell().add(Paragraph(DateUtil.dateToString(row.journalDate)))) // Date
-                table.addCell(Cell().add(Paragraph(row.accountName))) // Account Name
+                table.addCell(Cell().add(Paragraph(AccountLocalizationUtil.localizeAccountName(context, row.accountName)))) // Account Name
                 table.addCell(Cell().add(Paragraph(row.description))) // Description
-                table.addCell(Cell().add(Paragraph(decimalFormat.format(row.debit)))) // Debit
-                table.addCell(Cell().add(Paragraph(decimalFormat.format(row.credit)))) // Credit
+                table.addCell(Cell().add(Paragraph(CurrencyFormatUtil.formatCurrency(context, row.debit)))) // Debit
+                table.addCell(Cell().add(Paragraph(CurrencyFormatUtil.formatCurrency(context, row.credit)))) // Credit
 
                 totalDebit += row.debit
                 totalCredit += row.credit
             }
 
-            table.addCell(Cell(1, 4).add(Paragraph("Total").setBold())) // Gabungkan 3 kolom pertama
-            table.addCell(Cell().add(Paragraph(decimalFormat.format(totalDebit)).setBold())) // Total Debit
-            table.addCell(Cell().add(Paragraph(decimalFormat.format(totalCredit)).setBold())) // Total Credit
+            table.addCell(Cell(1, 4).add(Paragraph(context.getString(R.string.total)).setBold())) // Gabungkan 3 kolom pertama
+            table.addCell(Cell().add(Paragraph(CurrencyFormatUtil.formatCurrency(context, totalDebit)).setBold())) // Total Debit
+            table.addCell(Cell().add(Paragraph(CurrencyFormatUtil.formatCurrency(context, totalCredit)).setBold())) // Total Credit
 
             document.add(table)
 
             document.close()
 
-            Toast.makeText(context, "PDF saved in Download folder: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+            showDownloadSuccessDialog(
+                context = context,
+                fileLabel = context.getString(R.string.transaction_ledger_preview),
+                fileName = file.name,
+                mimeType = "application/pdf",
+                file = file
+            )
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Failed to create PDF: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.failed_create_pdf, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -399,12 +514,10 @@ object Utils {
         try {
             val pdf = PdfDocument(PdfWriter(file))
             val doc = Document(pdf)
-            doc.setMargins(24f, 20f, 24f, 20f)
+            doc.setMargins(32f, 28f, 32f, 28f)
 
             val lightBorder = DeviceRgb(200, 200, 200)
             val grayText = DeviceRgb(120, 120, 120)
-
-            val df = DecimalFormat("#,###.##").apply { roundingMode = RoundingMode.DOWN }
 
             // ===== Filter data =====
             val incomes = transactionData.filter { it.accountType == "Income" }
@@ -428,7 +541,7 @@ object Utils {
 
             // ===== Title =====
             doc.add(
-                Paragraph("Profit & Loss Preview")
+                Paragraph(context.getString(R.string.preview_laba_rugi))
                     .setBold()
                     .setFontSize(14f)
                     .setTextAlignment(TextAlignment.LEFT)
@@ -455,9 +568,27 @@ object Utils {
                 )
             }
 
-            summaryLine("Total Revenue: ${df.format(totalIncome)}")
-            summaryLine("Total Expenses: ${df.format(totalExpense)}")
-            summaryLine("Net Profit / Net Loss: ${df.format(netProfit)}", bold = true)
+            summaryLine(
+                context.getString(
+                    R.string.label_total_type,
+                    AccountLocalizationUtil.localizeAccountType(context, "Income"),
+                    CurrencyFormatUtil.formatCurrency(context, totalIncome)
+                )
+            )
+            summaryLine(
+                context.getString(
+                    R.string.label_total_type,
+                    AccountLocalizationUtil.localizeAccountType(context, "Expenses"),
+                    CurrencyFormatUtil.formatCurrency(context, totalExpense)
+                )
+            )
+            summaryLine(
+                context.getString(
+                    R.string.label_net_profit_loss,
+                    CurrencyFormatUtil.formatSignedCurrency(context, netProfit)
+                ),
+                bold = true
+            )
 
             doc.add(summary)
             doc.add(Paragraph("\n").setFontSize(10f))
@@ -475,7 +606,7 @@ object Utils {
 
                 if (rows.isEmpty()) {
                     val emptyCell = Cell(1, 2)
-                        .add(Paragraph("No data").setFontColor(grayText).setFontSize(10f))
+                        .add(Paragraph(context.getString(R.string.report_spotlight_default_title)).setFontColor(grayText).setFontSize(10f))
                         .setBorder(Border.NO_BORDER)
                         .setPaddingTop(8f)
                         .setPaddingBottom(8f)
@@ -483,7 +614,7 @@ object Utils {
                 } else {
                     rows.forEach { (name, amount) ->
                         val left = Cell()
-                            .add(Paragraph(name).setFontSize(12f))
+                            .add(Paragraph(AccountLocalizationUtil.localizeAccountName(context, name)).setFontSize(12f))
                             .setBorder(Border.NO_BORDER)
                             .setPaddingTop(10f)
                             .setPaddingBottom(10f)
@@ -491,7 +622,7 @@ object Utils {
 
                         val right = Cell()
                             .add(
-                                Paragraph(df.format(amount))
+                                Paragraph(CurrencyFormatUtil.formatCurrency(context, amount))
                                     .setBold()
                                     .setFontSize(12f)
                                     .setTextAlignment(TextAlignment.RIGHT)
@@ -511,19 +642,22 @@ object Utils {
             }
 
             // ===== Sections =====
-            addSection("Income", incomeGrouped)
-            addSection("Expenses", expenseGrouped)
+            addSection(context.getString(R.string.income), incomeGrouped)
+            addSection(context.getString(R.string.expenses), expenseGrouped)
 
             doc.close()
+            showDownloadSuccessDialog(
+                context = context,
+                fileLabel = context.getString(R.string.file_label_profit_loss_pdf),
+                fileName = file.name,
+                mimeType = "application/pdf",
+                file = file
+            )
+            return
 
-            Toast.makeText(
-                context,
-                "Profit & Loss PDF saved → ${file.path}",
-                Toast.LENGTH_LONG
-            ).show()
 
         } catch (e: Exception) {
-            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.error_prefix, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -543,10 +677,23 @@ object Utils {
             val doc = Document(pdf)
             doc.setMargins(24f, 20f, 24f, 20f)
 
-            val grayText = DeviceRgb(120, 120, 120)
-            val lightBorder = DeviceRgb(200, 200, 200)
+            val primaryText = DeviceRgb(34, 40, 49)
+            val mutedText = DeviceRgb(110, 118, 129)
+            val lightBorder = DeviceRgb(222, 226, 235)
+            val sectionBackground = DeviceRgb(247, 248, 252)
+            val totalBackground = DeviceRgb(232, 238, 255)
+            val accentText = DeviceRgb(42, 91, 215)
 
-            val df = DecimalFormat("#,###.##").apply { roundingMode = RoundingMode.DOWN }
+            val locale = currentLocale(context)
+            val periodFormatter = SimpleDateFormat("dd MMM yyyy", locale)
+            val generatedFormatter = SimpleDateFormat("dd MMM yyyy HH:mm", locale)
+
+            fun formatAmount(value: Double): String =
+                CurrencyFormatUtil.formatSignedCurrency(context, value)
+
+            fun accountTypeLabel(type: String): String {
+                return AccountLocalizationUtil.localizeAccountType(context, type)
+            }
 
 
             val assets = transactionData.filter { it.accountType == "Assets" }.sumOf { it.debit - it.credit }
@@ -554,114 +701,208 @@ object Utils {
             val expenses = transactionData.filter { it.accountType == "Expenses" }.sumOf { it.debit - it.credit }
             val netIncomeLoss = income - expenses
             val totalBalanceAssets = assets
+            val startDate = transactionData.minOfOrNull { it.journalDate }
+            val endDate = transactionData.maxOfOrNull { it.journalDate }
+            val periodText = if (startDate != null && endDate != null) {
+                "${periodFormatter.format(startDate)} - ${periodFormatter.format(endDate)}"
+            } else {
+                context.getString(R.string.all_periods)
+            }
 
 
             doc.add(
-                Paragraph("Balance Sheet Preview")
+                Paragraph(context.getString(R.string.balance_sheet_title_pdf))
                     .setBold()
-                    .setFontSize(14f)
-                    .setTextAlignment(TextAlignment.LEFT)
+                    .setFontSize(18f)
+                    .setFontColor(primaryText)
+            )
+            doc.add(
+                Paragraph(context.getString(R.string.balance_sheet_period, periodText))
+                    .setFontSize(10f)
+                    .setFontColor(mutedText)
+                    .setMarginTop(2f)
+            )
+            doc.add(
+                Paragraph(context.getString(R.string.generated_at, generatedFormatter.format(Date())))
+                    .setFontSize(10f)
+                    .setFontColor(mutedText)
+                    .setMarginTop(0f)
+                    .setMarginBottom(16f)
             )
 
-            doc.add(Paragraph("\n").setFontSize(6f))
+            doc.add(
+                Paragraph(context.getString(R.string.main_summary))
+                    .setBold()
+                    .setFontSize(12f)
+                    .setFontColor(primaryText)
+                    .setMarginBottom(8f)
+            )
 
-            // ====== Summary Box ======
-            val summary = Table(UnitValue.createPercentArray(floatArrayOf(1f)))
+            val summary = Table(UnitValue.createPercentArray(floatArrayOf(6f, 4f)))
                 .setWidth(UnitValue.createPercentValue(100f))
                 .setBorder(SolidBorder(lightBorder, 1f))
 
-            fun summaryLine(text: String, bold: Boolean = false) {
-                val p = Paragraph(text).setFontSize(11f)
-                if (bold) p.setBold()
-                summary.addCell(
-                    Cell()
-                        .add(p)
-                        .setBorder(Border.NO_BORDER)
-                        .setPaddingLeft(12f)
-                        .setPaddingRight(12f)
-                        .setPaddingTop(6f)
-                        .setPaddingBottom(6f)
-                )
+            fun addSummaryRow(label: String, value: String, highlight: Boolean = false) {
+                val background = if (highlight) totalBackground else null
+
+                val left = Cell()
+                    .add(
+                        Paragraph(label)
+                            .setFontSize(11f)
+                            .setFontColor(primaryText)
+                            .setBold()
+                    )
+                    .setPadding(10f)
+                    .setBorderBottom(SolidBorder(lightBorder, 0.75f))
+                    .setBorderLeft(Border.NO_BORDER)
+                    .setBorderRight(Border.NO_BORDER)
+                    .setBorderTop(Border.NO_BORDER)
+
+                val right = Cell()
+                    .add(
+                        Paragraph(value)
+                            .setFontSize(11f)
+                            .setFontColor(if (highlight) accentText else primaryText)
+                            .setBold()
+                            .setTextAlignment(TextAlignment.RIGHT)
+                    )
+                    .setPadding(10f)
+                    .setBorderBottom(SolidBorder(lightBorder, 0.75f))
+                    .setBorderLeft(Border.NO_BORDER)
+                    .setBorderRight(Border.NO_BORDER)
+                    .setBorderTop(Border.NO_BORDER)
+
+                if (background != null) {
+                    left.setBackgroundColor(background)
+                    right.setBackgroundColor(background)
+                }
+
+                summary.addCell(left)
+                summary.addCell(right)
             }
 
-            summaryLine("Assets: ${df.format(assets)}")
-            summaryLine("Net Income / Loss: ${df.format(netIncomeLoss)}")
-            summaryLine("Total Expenses: ${df.format(expenses)}")
-            summaryLine("Total Balance (Assets): ${df.format(totalBalanceAssets)}", bold = true)
+            addSummaryRow(context.getString(R.string.total_assets), formatAmount(assets))
+            addSummaryRow(context.getString(R.string.net_profit_loss), formatAmount(netIncomeLoss))
+            addSummaryRow(context.getString(R.string.total_expense), formatAmount(expenses))
+            addSummaryRow(context.getString(R.string.balance_total), formatAmount(totalBalanceAssets), highlight = true)
 
             doc.add(summary)
-
-            doc.add(Paragraph("\n").setFontSize(10f))
+            doc.add(
+                Paragraph(context.getString(R.string.account_breakdown))
+                    .setBold()
+                    .setFontSize(12f)
+                    .setFontColor(primaryText)
+                    .setMarginTop(18f)
+                    .setMarginBottom(10f)
+            )
 
 
             data class Row(val name: String, val type: String, val amount: Double)
 
             fun calcAmount(type: String, debit: Double, credit: Double): Double {
                 return when (type) {
-                    "Income" -> (credit - debit)
-                    "Expenses", "Assets" -> (debit - credit)
-                    else -> (debit - credit)
+                    "Income" -> credit - debit
+                    "Expenses", "Assets" -> debit - credit
+                    else -> debit - credit
                 }
             }
 
-            val rows = transactionData
+            val rowsByType = transactionData
                 .groupBy { it.accountName to it.accountType }
-                .map { (k, list) ->
-                    val (name, type) = k
-                    val amt = list.sumOf { calcAmount(type, it.debit, it.credit) }
-                    Row(name, type, amt)
+                .map { (key, list) ->
+                    val (name, type) = key
+                    Row(name, type, list.sumOf { calcAmount(type, it.debit, it.credit) })
+                }
+                .groupBy { it.type }
+
+            val orderedTypes = listOf("Assets", "Expenses", "Income")
+
+            orderedTypes.forEach { type ->
+                val rows = rowsByType[type].orEmpty().sortedBy { it.name.lowercase() }
+                if (rows.isEmpty()) return@forEach
+
+                doc.add(
+                    Paragraph(accountTypeLabel(type))
+                        .setBold()
+                        .setFontSize(11f)
+                        .setFontColor(accentText)
+                        .setBackgroundColor(sectionBackground)
+                        .setPadding(8f)
+                        .setMarginTop(8f)
+                        .setMarginBottom(0f)
+                )
+
+                val table = Table(UnitValue.createPercentArray(floatArrayOf(7f, 3f)))
+                    .setWidth(UnitValue.createPercentValue(100f))
+                    .setMarginBottom(10f)
+
+                rows.forEachIndexed { index, row ->
+                    val isLast = index == rows.lastIndex
+                    val bottomBorder = if (isLast) Border.NO_BORDER else SolidBorder(lightBorder, 0.5f)
+
+                    val left = Cell()
+                        .add(
+                            Paragraph(AccountLocalizationUtil.localizeAccountName(context, row.name))
+                                .setFontSize(11f)
+                                .setFontColor(primaryText)
+                                .setBold()
+                        )
+                        .add(
+                            Paragraph(context.getString(R.string.account_category_label, accountTypeLabel(row.type)))
+                                .setFontSize(9f)
+                                .setFontColor(mutedText)
+                                .setMarginTop(2f)
+                        )
+                        .setPaddingTop(10f)
+                        .setPaddingBottom(10f)
+                        .setPaddingLeft(8f)
+                        .setPaddingRight(8f)
+                        .setBorderTop(Border.NO_BORDER)
+                        .setBorderLeft(Border.NO_BORDER)
+                        .setBorderRight(Border.NO_BORDER)
+                        .setBorderBottom(bottomBorder)
+
+                    val right = Cell()
+                        .add(
+                            Paragraph(formatAmount(row.amount))
+                                .setFontSize(11f)
+                                .setFontColor(primaryText)
+                                .setBold()
+                                .setTextAlignment(TextAlignment.RIGHT)
+                        )
+                        .setPaddingTop(10f)
+                        .setPaddingBottom(10f)
+                        .setPaddingLeft(8f)
+                        .setPaddingRight(8f)
+                        .setBorderTop(Border.NO_BORDER)
+                        .setBorderLeft(Border.NO_BORDER)
+                        .setBorderRight(Border.NO_BORDER)
+                        .setBorderBottom(bottomBorder)
+
+                    table.addCell(left)
+                    table.addCell(right)
                 }
 
-            val typeOrder = mapOf("Assets" to 0, "Expenses" to 1, "Income" to 2)
-            val sortedRows = rows.sortedWith(
-                compareBy<Row> { typeOrder[it.type] ?: 99 }.thenBy { it.name.lowercase() }
+                doc.add(table)
+            }
+
+            doc.add(
+                Paragraph(context.getString(R.string.negative_balance_note))
+                    .setFontSize(9f)
+                    .setFontColor(mutedText)
+                    .setMarginTop(8f)
             )
 
-            val listTable = Table(UnitValue.createPercentArray(floatArrayOf(7f, 3f)))
-                .setWidth(UnitValue.createPercentValue(100f))
-
-            sortedRows.forEach { r ->
-                val left = Cell()
-                    .setBorder(Border.NO_BORDER)
-                    .setPaddingTop(10f)
-                    .setPaddingBottom(10f)
-
-                left.add(
-                    Paragraph(r.name)
-                        .setBold()
-                        .setFontSize(12f)
-                )
-                left.add(
-                    Paragraph(r.type)
-                        .setFontSize(9f)
-                        .setFontColor(grayText)
-                        .setMarginTop(2f)
-                )
-
-                val right = Cell()
-                    .setBorder(Border.NO_BORDER)
-                    .setPaddingTop(10f)
-                    .setPaddingBottom(10f)
-
-                right.add(
-                    Paragraph(df.format(r.amount))
-                        .setBold()
-                        .setFontSize(12f)
-                        .setTextAlignment(TextAlignment.RIGHT)
-                )
-
-                left.setBorderBottom(SolidBorder(lightBorder, 0.5f))
-                right.setBorderBottom(SolidBorder(lightBorder, 0.5f))
-
-                listTable.addCell(left)
-                listTable.addCell(right)
-            }
-
-            doc.add(listTable)
-
             doc.close()
+            showDownloadSuccessDialog(
+                context = context,
+                fileLabel = context.getString(R.string.file_label_balance_sheet_pdf),
+                fileName = file.name,
+                mimeType = "application/pdf",
+                file = file
+            )
+            return
 
-            Toast.makeText(context, "Balance Sheet PDF saved → ${file.path}", Toast.LENGTH_LONG).show()
 
         } catch (e: Exception) {
             Toast.makeText(context, "Error → ${e.message}", Toast.LENGTH_LONG).show()
@@ -679,6 +920,8 @@ object Utils {
 
         val dateTime = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val fileName = "journal_category_$dateTime.pdf"
+        var savedUri: Uri? = null
+        var savedFile: File? = null
 
         try {
             val outputStream = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -689,11 +932,14 @@ object Utils {
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
                 }
                 val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
-                    ?: throw IllegalStateException("Gagal membuat file di Downloads")
-                resolver.openOutputStream(uri) ?: throw IllegalStateException("Gagal membuka OutputStream")
+                    ?: throw IllegalStateException(context.getString(R.string.error_create_download_file))
+                savedUri = uri
+                resolver.openOutputStream(uri)
+                    ?: throw IllegalStateException(context.getString(R.string.error_open_output_stream))
             } else {
                 val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 val file = java.io.File(downloadsDir, fileName)
+                savedFile = file
                 java.io.FileOutputStream(file)
             }
 
@@ -702,12 +948,12 @@ object Utils {
             val document = Document(pdfDocument)
 
             // ====== TITLE ======
-            val title = Paragraph("Journal Report")
+            val title = Paragraph(context.getString(R.string.journal_report_title))
                 .setBold()
                 .setFontSize(16f)
                 .setTextAlignment(TextAlignment.CENTER)
 
-            val subTitle = Paragraph("Category: category")
+            val subTitle = Paragraph(context.getString(R.string.journal_report_category, context.getString(R.string.category)))
                 .setFontSize(12f)
                 .setTextAlignment(TextAlignment.CENTER)
 
@@ -728,12 +974,10 @@ object Utils {
             fun header(text: String) =
                 Cell().setBackgroundColor(headerBg).add(Paragraph(text).setBold())
 
-            table.addHeaderCell(header("No"))
-            table.addHeaderCell(header("Account"))
-            table.addHeaderCell(header("Description"))
-            table.addHeaderCell(header("Total"))
-
-            val decimalFormat = DecimalFormat("#,###.##").apply { roundingMode = RoundingMode.DOWN }
+            table.addHeaderCell(header(context.getString(R.string.number_short)))
+            table.addHeaderCell(header(context.getString(R.string.account)))
+            table.addHeaderCell(header(context.getString(R.string.description)))
+            table.addHeaderCell(header(context.getString(R.string.total)))
 
             var totalDebit = 0.0
 
@@ -742,13 +986,13 @@ object Utils {
                 val amount = row.debit
 
                 table.addCell(Cell().add(Paragraph((index + 1).toString())))
-                table.addCell(Cell().setBackgroundColor(accountBg).add(Paragraph(row.accountName)))
+                table.addCell(Cell().setBackgroundColor(accountBg).add(Paragraph(AccountLocalizationUtil.localizeAccountName(context, row.accountName))))
                 table.addCell(Cell().setBackgroundColor(descBg).add(Paragraph(row.description)))
                 table.addCell(
                     Cell()
                         .setBackgroundColor(totalBg)
                         .setTextAlignment(TextAlignment.RIGHT)
-                        .add(Paragraph(decimalFormat.format(amount)))
+                        .add(Paragraph(CurrencyFormatUtil.formatCurrency(context, amount)))
                 )
 
                 totalDebit += amount
@@ -758,7 +1002,12 @@ object Utils {
             document.add(Paragraph(" ").setFontSize(6f))
 
             // ====== TOTAL ======
-            val totalText = Paragraph("Total: ${decimalFormat.format(totalDebit)}")
+            val totalText = Paragraph(
+                context.getString(
+                    R.string.label_total_amount,
+                    CurrencyFormatUtil.formatCurrency(context, totalDebit)
+                )
+            )
                 .setBold()
                 .setTextAlignment(TextAlignment.LEFT)
 
@@ -767,11 +1016,18 @@ object Utils {
             document.close()
             outputStream.close()
 
-            Toast.makeText(context, "PDF berhasil disimpan di Downloads: $fileName", Toast.LENGTH_LONG).show()
+            showDownloadSuccessDialog(
+                context = context,
+                fileLabel = context.getString(R.string.category_preview),
+                fileName = fileName,
+                mimeType = "application/pdf",
+                file = savedFile,
+                fileUri = savedUri
+            )
 
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Gagal membuat PDF: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.failed_create_pdf, e.message), Toast.LENGTH_LONG).show()
         }
     }
 

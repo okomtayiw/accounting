@@ -11,6 +11,9 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+static def generateVersionCode() {
+    return (System.currentTimeMillis() / 1000).toInteger()
+}
 
 android {
     namespace = 'com.babsnet.accounting'
@@ -20,7 +23,7 @@ android {
         applicationId = "com.babsnet.accounting"
         minSdk = 23
         targetSdk = 35
-        versionCode = 1
+        versionCode = generateVersionCode()
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,7 +63,8 @@ android {
         }
 
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -79,6 +83,17 @@ android {
         viewBinding true
     }
 
+    packaging {
+        resources {
+            excludes += [
+                    "/META-INF/{AL2.0,LGPL2.1}",
+                    "/META-INF/LICENSE*",
+                    "/META-INF/NOTICE*",
+                    "/META-INF/DEPENDENCIES"
+            ]
+        }
+    }
+
     java {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(17))
@@ -87,43 +102,35 @@ android {
 }
 
 dependencies {
-    // dependencies kamu biarkan seperti sekarang
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.androidx.constraintlayout
 
     implementation libs.material
-    implementation libs.material.v1100
 
     implementation libs.androidx.lifecycle.livedata.ktx
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx
-    implementation libs.androidx.navigation.fragment.ktx.v260
-    implementation libs.androidx.navigation.ui.ktx.v260
 
     implementation libs.androidx.drawerlayout
-    implementation libs.google.material.v1100
 
     implementation libs.androidx.vectordrawable
 
     implementation libs.androidx.room.ktx
     implementation libs.androidx.room.runtime
-    implementation libs.support.annotations
     implementation libs.androidx.annotation
     implementation libs.androidx.activity
     ksp libs.androidx.room.compiler
 
-    implementation libs.itext7.core
+    implementation libs.itext7.kernel
+    implementation libs.itext7.layout
     implementation libs.jxl
 
     implementation libs.androidx.viewpager2
-    implementation libs.material.v130
 
     implementation libs.shimmer
-    implementation libs.androidx.room.ktx.v252
-    implementation(libs.core)
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit

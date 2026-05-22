@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.BalanceLineAdapter
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.BalanceLine
@@ -13,18 +14,23 @@ import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.TransactionData
 import com.babsnet.accounting.databinding.ActivityBalanceSheetPreviewBinding
 import com.babsnet.accounting.repository.JournalRepository
+import com.babsnet.accounting.utils.AccountLocalizationUtil
+import com.babsnet.accounting.utils.CurrencyFormatUtil
 import com.babsnet.accounting.utils.GenericViewModelFactory
+import com.babsnet.accounting.utils.LanguagePreference
 import com.babsnet.accounting.utils.SystemBarsHelper
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.TransactionsViewModel
-import java.math.RoundingMode
-import java.text.DecimalFormat
 
 class ActivityBalanceSheetPreview : AppCompatActivity() {
 
     private lateinit var binding: ActivityBalanceSheetPreviewBinding
     private lateinit var viewModel: TransactionsViewModel
     private var currentTx: List<TransactionData> = emptyList()
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LanguagePreference.wrapContext(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +42,10 @@ class ActivityBalanceSheetPreview : AppCompatActivity() {
 
         binding.rvLines.layoutManager = LinearLayoutManager(this)
         val formatNumber: (Double) -> String = { value ->
-            if (value % 1 == 0.0) DecimalFormat("#,###").format(value)
-            else DecimalFormat("#,###.############")
-                .apply { roundingMode = RoundingMode.DOWN }
-                .format(value)
+            CurrencyFormatUtil.formatCurrency(this, value)
+        }
+        val signedAmount: (Double) -> String = { value ->
+            CurrencyFormatUtil.formatSignedCurrency(this, value)
         }
         val adapter = BalanceLineAdapter(formatNumber)
         binding.rvLines.adapter = adapter
@@ -48,7 +54,7 @@ class ActivityBalanceSheetPreview : AppCompatActivity() {
         binding.btnClose.setOnClickListener { finish() }
         binding.btnGeneratePdf.setOnClickListener {
             if (currentTx.isEmpty()) {
-                Toast.makeText(this, "Data masih kosong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.toast_empty_report_data), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             Utils.createPdfBalanceSheet(this, currentTx)
@@ -73,10 +79,22 @@ class ActivityBalanceSheetPreview : AppCompatActivity() {
             val totalExpenses = tx.filter { it.accountType == "Expenses" }.sumOf { it.debit - it.credit }
             val equity = totalIncome - totalExpenses
 
-            binding.tvAssets.text = "Assets: ${formatNumber(totalAssets)}"
-            binding.tvNetIncome.text = "Net Income / Loss: ${formatNumber(equity)}"
-            binding.tvExpenses.text = "Total Expenses: ${formatNumber(totalExpenses)}"
-            binding.tvTotalBalance.text = "Total Balance (Assets): ${formatNumber(totalAssets)}"
+            binding.tvAssets.text = getString(
+                R.string.label_type_amount,
+                AccountLocalizationUtil.localizeAccountType(this, "Assets"),
+                signedAmount(totalAssets)
+            )
+            binding.tvNetIncome.text = getString(R.string.label_net_income_loss, signedAmount(equity))
+            binding.tvExpenses.text = getString(
+                R.string.label_total_type,
+                AccountLocalizationUtil.localizeAccountType(this, "Expenses"),
+                signedAmount(totalExpenses)
+            )
+            binding.tvTotalBalance.text = getString(
+                R.string.label_total_balance,
+                AccountLocalizationUtil.localizeAccountType(this, "Assets"),
+                signedAmount(totalAssets)
+            )
 
             val lines = tx.groupBy { it.accountType to it.accountName }
                 .map { (key, list) ->

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/accountFragment"
         android:name="com.babsnet.accounting.ui.account.AccountFragment"
-        android:label="Account" >
+        android:label="@string/title_account" >
         <action
             android:id="@+id/action_to_accountInputFragment"
             app:destination="@id/accountInputFragment" />
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/navigation_journal"
         android:name="com.babsnet.accounting.ui.journal.JournalFragment"
-        android:label="Journal">
+        android:label="@string/title_journal">
         <action
             android:id="@+id/action_journal_to_add_edit_journal"
             app:destination="@id/addEditJournalFragment" />
@@ -26,14 +26,14 @@
     <fragment
         android:id="@+id/navigation_transactions"
         android:name="com.babsnet.accounting.ui.transactions.TransactionsFragment"
-        android:label="Transactions" >
+        android:label="@string/title_transactions" >
 
     </fragment>
 
     <fragment
         android:id="@+id/addEditJournalFragment"
         android:name="com.babsnet.accounting.ui.journal.AddEditJournalFragment"
-        android:label="Add/Edit Journal">
+        android:label="@string/title_add_journal">
 
 
         <action
@@ -50,7 +50,7 @@
     <fragment
         android:id="@+id/accountInputFragment"
         android:name="com.babsnet.accounting.ui.account.AccountInputFragment"
-        android:label="Account Input">
+        android:label="@string/manage_category">
         <argument
             android:name="accountId"
             app:argType="integer"

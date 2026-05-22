@@ -55,10 +55,13 @@
         android:id="@+id/tvTotal"
         android:layout_width="@dimen/col_debit"
         android:layout_height="match_parent"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:gravity="end|center_vertical"
         android:paddingHorizontal="@dimen/cell_pad_h"
         android:paddingVertical="@dimen/cell_pad_v"
         android:background="#E1F5FE"
+        android:textSize="13sp"
         android:textColor="@color/black" />
 
 </LinearLayout>

@@ -3,9 +3,9 @@ package com.babsnet.accounting.ui.transactions
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.BalanceLineAdapter
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.BalanceLine
@@ -14,18 +14,23 @@ import com.babsnet.accounting.data.dao.LedgerDao
 import com.babsnet.accounting.data.entity.TransactionData
 import com.babsnet.accounting.databinding.ActivityProfitLossPreviewBinding
 import com.babsnet.accounting.repository.JournalRepository
+import com.babsnet.accounting.utils.AccountLocalizationUtil
+import com.babsnet.accounting.utils.CurrencyFormatUtil
 import com.babsnet.accounting.utils.GenericViewModelFactory
+import com.babsnet.accounting.utils.LanguagePreference
 import com.babsnet.accounting.utils.SystemBarsHelper
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.TransactionsViewModel
-import java.math.RoundingMode
-import java.text.DecimalFormat
 
 class ActivityProfitLossPreview : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfitLossPreviewBinding
     private lateinit var viewModel: TransactionsViewModel
     private var currentTx: List<TransactionData> = emptyList()
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LanguagePreference.wrapContext(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +40,8 @@ class ActivityProfitLossPreview : AppCompatActivity() {
 
         SystemBarsHelper.applySystemBarsPadding(this, binding.root)
 
-
-
         val formatNumber: (Double) -> String = { value ->
-            if (value % 1 == 0.0) DecimalFormat("#,###").format(value)
-            else DecimalFormat("#,###.############").apply { roundingMode = RoundingMode.DOWN }.format(value)
+            CurrencyFormatUtil.formatCurrency(this, value)
         }
 
         // RecyclerView
@@ -51,7 +53,7 @@ class ActivityProfitLossPreview : AppCompatActivity() {
 
         binding.btnGeneratePdf.setOnClickListener {
             if (currentTx.isEmpty()) {
-                Toast.makeText(this, "Data masih kosong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.toast_empty_report_data), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             Utils.createPdfProfitAndLoss(this, currentTx)
@@ -78,9 +80,20 @@ class ActivityProfitLossPreview : AppCompatActivity() {
             val expenses = tx.filter { it.accountType == "Expenses" }.sumOf { it.debit - it.credit }
             val net = revenue - expenses
 
-            binding.tvRevenue.text = "Total Revenue: ${formatNumber(revenue)}"
-            binding.tvExpenses.text = "Total Expenses: ${formatNumber(expenses)}"
-            binding.tvNet.text = "Net Profit / Net Loss: ${formatNumber(net)}"
+            binding.tvRevenue.text = getString(
+                R.string.label_total_type,
+                AccountLocalizationUtil.localizeAccountType(this, "Income"),
+                formatNumber(revenue)
+            )
+            binding.tvExpenses.text = getString(
+                R.string.label_total_type,
+                AccountLocalizationUtil.localizeAccountType(this, "Expenses"),
+                formatNumber(expenses)
+            )
+            binding.tvNet.text = getString(
+                R.string.label_net_profit_loss,
+                CurrencyFormatUtil.formatSignedCurrency(this, net)
+            )
 
             // Breakdown per accountName (Income & Expenses)
             val lines = tx

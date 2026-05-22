@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.*
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -21,12 +22,14 @@ import com.babsnet.accounting.data.entity.Journal
 import com.babsnet.accounting.databinding.FragmentAddEditJournalBinding
 import com.babsnet.accounting.repository.AccountRepository
 import com.babsnet.accounting.repository.JournalRepository
+import com.babsnet.accounting.utils.AccountLocalizationUtil
 import com.babsnet.accounting.utils.DateUtil
 import com.babsnet.accounting.utils.DateUtil.dateToString
 import com.babsnet.accounting.viewModel.JournalViewModel
 import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.AccountViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -122,7 +125,12 @@ class AddEditJournalFragment : Fragment() {
                         )
                     }
 
-                    binding.accountNameOne.text = journalWithDetails.ledgers[0].accountName
+
+                    for (ledger in journalWithDetails.ledgers) {
+                        if (ledger.accountType == "Assets") {
+                            binding.accountNameOne.text = AccountLocalizationUtil.localizeAccountName(requireContext(), ledger.accountName)
+                        }
+                    }
 
                     binding.tvTime.text = Editable.Factory.getInstance().newEditable(
                         journalWithDetails.journal.date?.let { dateToString(it) }
@@ -148,7 +156,7 @@ class AddEditJournalFragment : Fragment() {
                 accountViewModel = accountViewModel,
                 accountType = "Assets"
             ) { selectedAccount ->
-                binding.accountNameOne.text = selectedAccount.accountName
+                binding.accountNameOne.text = AccountLocalizationUtil.localizeAccountName(requireContext(), selectedAccount)
                 accountIdOne = selectedAccount.accountId
             }
         }
@@ -183,23 +191,23 @@ class AddEditJournalFragment : Fragment() {
 
     private fun selectTab(isExpenditure: Boolean) {
 
-        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.tab_text_selected)
-        val unselectedTextColor = ContextCompat.getColor(requireContext(), R.color.tab_text_unselected)
+        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.white)
+        val unselectedTextColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
 
         if (isExpenditure) {
 
-            binding.tabExpenditure.setBackgroundResource(R.drawable.tab_selected_bg)
+            binding.tabExpenditure.setBackgroundResource(R.drawable.journal_form_tab_selected)
             binding.tabExpenditure.setTextColor(selectedTextColor)
 
-            binding.tabRevenue.setBackgroundResource(R.drawable.tab_unselected_bg)
+            binding.tabRevenue.setBackgroundResource(R.drawable.journal_form_tab_unselected)
             binding.tabRevenue.setTextColor(unselectedTextColor)
 
         } else {
 
-            binding.tabRevenue.setBackgroundResource(R.drawable.tab_selected_bg)
+            binding.tabRevenue.setBackgroundResource(R.drawable.journal_form_tab_selected)
             binding.tabRevenue.setTextColor(selectedTextColor)
 
-            binding.tabExpenditure.setBackgroundResource(R.drawable.tab_unselected_bg)
+            binding.tabExpenditure.setBackgroundResource(R.drawable.journal_form_tab_unselected)
             binding.tabExpenditure.setTextColor(unselectedTextColor)
         }
     }
@@ -214,15 +222,16 @@ class AddEditJournalFragment : Fragment() {
 
 
             if (description.isEmpty() || date.isEmpty()) {
-                Toast.makeText(requireContext(), "All fields are required", Toast.LENGTH_SHORT).show()
+                showValidationWarning(getString(R.string.validation_all_fields_required))
                 return@setOnClickListener
             }
+            if (accountIdTwo == null) {
+                showValidationWarning(getString(R.string.validation_category_required))
+                return@setOnClickListener
+            }
+
             Utils.showLoading(binding.progressBar)
             lifecycleScope.launch {
-                if (accountIdTwo == null) {
-                    Toast.makeText(requireContext(), "Category must be selected", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
                 try {
                     withContext(Dispatchers.IO) {
                         val debit = 0.0
@@ -319,18 +328,32 @@ class AddEditJournalFragment : Fragment() {
                         }
 
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(requireContext(), "Journal saved successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.toast_journal_saved), Toast.LENGTH_SHORT).show()
                             findNavController().navigateUp()
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), getString(R.string.error_prefix, e.message), Toast.LENGTH_LONG).show()
                     }
                 }
                 Utils.hideLoading(binding.progressBar)
             }
         }
+    }
+
+    private fun showValidationWarning(message: String) {
+        val snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT)
+        snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+        val layout = snackbar.view as Snackbar.SnackbarLayout
+        layout.setPadding(24, 0, 24, 28)
+
+        val customView = layoutInflater.inflate(R.layout.view_warning_snackbar, null)
+        customView.findViewById<TextView>(R.id.tvWarningMessage).text = message
+
+        layout.removeAllViews()
+        layout.addView(customView)
+        snackbar.show()
     }
 
     @Deprecated("Deprecated in Java")
