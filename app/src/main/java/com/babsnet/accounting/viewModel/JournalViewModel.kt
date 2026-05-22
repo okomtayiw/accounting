@@ -1,9 +1,11 @@
 package com.babsnet.accounting.viewModel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.data.entity.Journal
@@ -13,6 +15,18 @@ import kotlinx.coroutines.launch
 
 class JournalViewModel(private val repository: JournalRepository) : ViewModel() {
 
+    private val _searchQuery = MutableLiveData("")
+    val searchQuery: LiveData<String> = _searchQuery
+
+    fun setSearch(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun searchByRange(start: Long, end: Long): LiveData<List<JournalWithDetails>> {
+        return searchQuery.switchMap { q ->
+            repository.searchJournalsByRange(start, end, q.trim()).asLiveData()
+        }
+    }
 
     val allJournalsWithDetails = liveData {
         emitSource(repository.getAllJournalsWithDetails().asLiveData())

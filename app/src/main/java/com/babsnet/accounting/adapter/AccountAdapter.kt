@@ -9,10 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.Account
-import androidx.core.graphics.toColorInt
+import com.babsnet.accounting.utils.AccountLocalizationUtil
 
 class AccountAdapter(
     private var accounts: List<Account>,
@@ -20,20 +21,25 @@ class AccountAdapter(
     private val onDeleteClick: (Account) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
+    private var allAccounts: List<Account> = accounts
+    private var entryCounts: Map<Int, Int> = emptyMap()
+    private var attachedContext: Context? = null
+
     inner class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val tvName: TextView = view.findViewById(R.id.tvCategoryName)
+        private val tvCount: TextView = view.findViewById(R.id.tvCategoryCount)
         private val imgIcon: ImageView = view.findViewById(R.id.imgCategoryIcon)
 
         @SuppressLint("SetTextI18n")
         fun bind(account: Account) {
+            tvName.text = AccountLocalizationUtil.localizeAccountName(itemView.context, account)
+            tvCount.text = itemView.context.getString(
+                R.string.entries_count,
+                entryCounts[account.accountId] ?: 0
+            )
 
-            // Set name
-            tvName.text = account.accountName
-
-            // --- SET ICON ---
             val context = itemView.context
-
             val iconId = context.resources.getIdentifier(
                 account.iconResName ?: "",
                 "drawable",
@@ -46,19 +52,18 @@ class AccountAdapter(
                 imgIcon.setImageResource(R.drawable.ic_category)
             }
 
-            // --- SET COLOR ---
             try {
                 imgIcon.setColorFilter((account.color ?: "#000000").toColorInt())
             } catch (e: Exception) {
                 imgIcon.setColorFilter(Color.GRAY)
             }
 
-            // Klik item → edit
-            itemView.setOnClickListener { onEditClick(account) }
-
-            // Long press popup
-            tvName.setOnClickListener {
+            itemView.setOnClickListener {
                 showPopupMenu(it, itemView.context, account)
+            }
+            itemView.setOnLongClickListener {
+                showPopupMenu(it, itemView.context, account)
+                true
             }
         }
     }
@@ -77,10 +82,12 @@ class AccountAdapter(
                     onEditClick(account)
                     true
                 }
+
                 R.id.menu_delete -> {
                     onDeleteClick(account)
                     true
                 }
+
                 else -> false
             }
         }
@@ -101,7 +108,39 @@ class AccountAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newAccounts: List<Account>) {
+        allAccounts = newAccounts
         accounts = newAccounts
         notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateEntryCounts(counts: Map<Int, Int>) {
+        entryCounts = counts
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun filter(query: String) {
+        val keyword = query.trim()
+        val context = attachedContext
+        accounts = if (keyword.isEmpty()) {
+            allAccounts
+        } else if (context == null) {
+            allAccounts.filter {
+                it.accountName.contains(keyword, ignoreCase = true)
+            }
+        } else {
+            allAccounts.filter {
+                AccountLocalizationUtil.matchesAccountQuery(context, it, keyword)
+            }
+        }
+        notifyDataSetChanged()
+    }
+
+    fun currentItemCount(): Int = accounts.size
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        attachedContext = recyclerView.context
     }
 }

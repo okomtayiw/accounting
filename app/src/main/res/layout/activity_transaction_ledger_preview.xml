@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:colorBackground"
+    tools:context=".ui.transactions.ActivityTransactionLedgerPreview">
+
+    <!-- Judul -->
+    <TextView
+        android:text="@string/transaction_ledger_preview"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"/>
+
+    <HorizontalScrollView
+        android:id="@+id/hScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="horizontal"
+        android:descendantFocusability="blocksDescendants">
+
+        <LinearLayout
+            android:layout_width="@dimen/ledger_table_width"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Header -->
+            <LinearLayout
+                android:layout_width="@dimen/ledger_table_width"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="#E0E0E0"
+                android:paddingVertical="6dp">
+
+                <TextView
+                    android:layout_width="@dimen/col_no"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_short"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/cell_pad_h" />
+
+                <TextView
+                    android:layout_width="@dimen/col_account"
+                    android:layout_height="wrap_content"
+                    android:text="@string/account"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/cell_pad_h" />
+
+                <TextView
+                    android:layout_width="@dimen/col_desc"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/cell_pad_h" />
+
+                <TextView
+                    android:id="@+id/tvDebitHeader"
+                    android:layout_width="@dimen/col_debit"
+                    android:layout_height="wrap_content"
+                    android:text="@string/debit"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:gravity="end"
+                    android:paddingHorizontal="@dimen/cell_pad_h" />
+
+                <TextView
+                    android:id="@+id/tvCreditHeader"
+                    android:layout_width="@dimen/col_credit"
+                    android:layout_height="wrap_content"
+                    android:text="@string/credit"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:gravity="end"
+                    android:paddingHorizontal="@dimen/cell_pad_h" />
+            </LinearLayout>
+
+
+            <!-- RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLedger"
+                android:layout_width="@dimen/ledger_table_width"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scrollbars="vertical" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+
+
+    <!-- Bagian total -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvTotalDebit"
+            android:text="@string/total_debit_0"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="?attr/colorOnSurface"/>
+
+        <TextView
+            android:id="@+id/tvTotalCredit"
+            android:text="@string/total_credit_0"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textSize="14sp"
+            android:textColor="?attr/colorOnSurface"/>
+    </LinearLayout>
+
+    <!-- Tombol aksi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnClose"
+            android:text="@string/close"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/blue"
+            android:textColor="?attr/colorOnSurface"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnGeneratePdf"
+            android:text="@string/generate_pdf"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/purple_700"
+            android:textColor="?attr/colorOnSurface"/>
+    </LinearLayout>
+
+</LinearLayout>

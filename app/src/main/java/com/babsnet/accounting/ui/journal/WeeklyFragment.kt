@@ -10,11 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.JournalWithDetailsAdapter
-import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.databinding.FragmentWeeklyBinding
-import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.DateUtil
-import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.JournalViewModel
 
@@ -25,7 +22,6 @@ class WeeklyFragment : Fragment() {
 
     private lateinit var journalViewModel: JournalViewModel
 
-    /** Adapter dibuat tetap (tidak recreate saat fragment re-attach) */
     private val adapter by lazy {
         JournalWithDetailsAdapter(
             onDeleteJournal = { item ->
@@ -60,13 +56,7 @@ class WeeklyFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val db = AppDatabase.getDatabase(requireContext())
-        val repo = JournalRepository(db.journalDao(), db.ledgerDao())
-
-        journalViewModel = ViewModelProvider(
-            this,
-            GenericViewModelFactory(JournalViewModel::class.java) { JournalViewModel(repo) }
-        )[JournalViewModel::class.java]
+        journalViewModel = ViewModelProvider(requireActivity())[JournalViewModel::class.java]
     }
 
     private fun setupRecycler() {
@@ -84,7 +74,7 @@ class WeeklyFragment : Fragment() {
     private fun observeData() {
         val (start, end) = DateUtil.getStartAndEndOfWeek()
 
-        journalViewModel.getJournalsForWeek(start, end).observe(viewLifecycleOwner) {
+        journalViewModel.searchByRange(start, end).observe(viewLifecycleOwner) {
             adapter.submitList(it)
             showEmptyState(it.isEmpty())
         }

@@ -1,25 +1,28 @@
 package com.babsnet.accounting.ui.account
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.AccountAdapter
 import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.data.dao.AccountDao
 import com.babsnet.accounting.data.dao.LedgerDao
+import com.babsnet.accounting.data.entity.Account
 import com.babsnet.accounting.databinding.FragmentAccountBinding
 import com.babsnet.accounting.repository.AccountRepository
+import com.babsnet.accounting.utils.AccountLocalizationUtil
 import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.AccountViewModel
@@ -27,12 +30,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.withContext
 
 class AccountFragment : Fragment() {
 
     private var _binding: FragmentAccountBinding? = null
     private lateinit var accountViewModel: AccountViewModel
+    private lateinit var adapter: AccountAdapter
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -41,21 +45,30 @@ class AccountFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        // Setup repository and ViewModel
         val repository = setupRepository()
         accountViewModel = setupViewModel(repository)
+
         val drawerLayout = activity?.findViewById<DrawerLayout>(R.id.drawer_layout)
         binding.btnMenu.setOnClickListener {
             drawerLayout?.openDrawer(GravityCompat.START)
         }
 
-        // Setup RecyclerView
-        val adapter = AccountAdapter(
+        setupRecyclerView()
+        setupSearch()
+        observeAccounts()
+
+        binding.fabAddAccount.setOnClickListener {
+            navigateToAccountInputFragment()
+        }
+
+        return binding.root
+    }
+
+    private fun setupRecyclerView() {
+        adapter = AccountAdapter(
             accounts = emptyList(),
             onEditClick = { account ->
-                // Navigate to AddEditJournalFragment with the journal ID
                 val bundle = Bundle().apply {
                     putInt("accountId", account.accountId)
                 }
@@ -65,46 +78,75 @@ class AccountFragment : Fragment() {
                 Utils.showLoading(binding.progressBar)
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(2000)
-                    // Delete the account
                     val ledgers = accountViewModel.checkLedgerByAccountId(account)
-                    if(ledgers.isNotEmpty()) {
-                        Toast.makeText(requireContext(), "The account cannot be deleted because it is already used for transaction data", Toast.LENGTH_SHORT).show()
+                    if (ledgers.isNotEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.toast_account_in_use),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        accountViewModel.delete(account) // Delete from ViewModel
-                        Toast.makeText(requireContext(), "Account deleted: ${account.accountName}", Toast.LENGTH_SHORT).show()
+                        accountViewModel.delete(account)
+                        Toast.makeText(
+                            requireContext(),
+                            getString(
+                                R.string.toast_account_deleted,
+                                AccountLocalizationUtil.localizeAccountName(requireContext(), account)
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     Utils.hideLoading(binding.progressBar)
                 }
-
             }
         )
-        binding.recyclerViewAccount.adapter = adapter
+
         binding.recyclerViewAccount.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewAccount.adapter = adapter
+    }
 
-        // Observe data from ViewModel
+    private fun setupSearch() {
+        binding.etSearchCategory.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                adapter.filter(s?.toString().orEmpty())
+                updateVisibleState()
+            }
+
+            override fun afterTextChanged(s: Editable?) = Unit
+        })
+    }
+
+    private fun observeAccounts() {
         accountViewModel.allAccount.observe(viewLifecycleOwner) { accounts ->
-            adapter.updateData(accounts) // Update RecyclerView data
-            showEmptyState(accounts.isEmpty())
+            adapter.updateData(accounts)
+            adapter.filter(binding.etSearchCategory.text?.toString().orEmpty())
+            updateVisibleState()
+            loadEntryCounts(accounts)
         }
-        // Handle Floating Action Button click
-        binding.fabAddAccount.setOnClickListener {
-            navigateToAccountInputFragment()
-        }
+    }
 
-        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        ContextCompat.getDrawable(requireContext(), R.drawable.list_divider)?.let {
-            divider.setDrawable(it)
+    private fun loadEntryCounts(accounts: List<Account>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val counts = withContext(Dispatchers.IO) {
+                accounts.associate { account ->
+                    account.accountId to accountViewModel.checkLedgerByAccountId(account).size
+                }
+            }
+            adapter.updateEntryCounts(counts)
         }
-        binding.recyclerViewAccount.addItemDecoration(divider)
+    }
 
-        return root
+    private fun updateVisibleState() {
+        val isEmpty = adapter.currentItemCount() == 0
+        binding.tvNoData.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.recyclerViewAccount.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     private fun navigateToAccountInputFragment() {
-        val navController = findNavController()
-        navController.navigate(R.id.accountInputFragment)
+        findNavController().navigate(R.id.accountInputFragment)
     }
-
 
     private fun setupRepository(): AccountRepository {
         val dao: AccountDao = AppDatabase.getDatabase(requireContext()).accountDao()
@@ -117,11 +159,6 @@ class AccountFragment : Fragment() {
             AccountViewModel::class.java
         ) { AccountViewModel(repository) }
         return ViewModelProvider(this, accountViewModelFactory)[AccountViewModel::class.java]
-    }
-
-    private fun showEmptyState(isEmpty: Boolean) {
-        binding.tvNoData.visibility = if (isEmpty) View.VISIBLE else View.GONE
-        binding.recyclerViewAccount.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     override fun onDestroyView() {

@@ -9,6 +9,7 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Delete
 import androidx.room.Transaction
+import com.babsnet.accounting.data.entity.JournalWithDetails
 import com.babsnet.accounting.data.entity.Ledger
 import com.babsnet.accounting.data.entity.LedgerWithAccount
 import kotlinx.coroutines.flow.Flow
@@ -103,6 +104,35 @@ interface JournalDao {
 
     @Query("SELECT * FROM ledger WHERE journal_id = :journalId")
     suspend fun getLedgersByJournalId(journalId: Int): List<Ledger> // Tidak boleh nullable!
+
+
+    @Transaction
+    @Query("""
+    SELECT * FROM journal j
+    WHERE j.date BETWEEN :startDate AND :endDate
+      AND (
+        :query = ''
+        OR CAST(j.journalId AS TEXT) LIKE '%' || :query || '%'
+        OR j.description LIKE '%' || :query || '%' COLLATE NOCASE
+        OR EXISTS (
+            SELECT 1 FROM ledger_with_account lwa
+            WHERE lwa.journal_id = j.journalId
+              AND (
+                lwa.accountName LIKE '%' || :query || '%' COLLATE NOCASE
+                OR lwa.accountType LIKE '%' || :query || '%' COLLATE NOCASE
+                OR CAST(lwa.ledgerDebit AS TEXT) LIKE '%' || :query || '%'
+                OR CAST(lwa.ledgerCredit AS TEXT) LIKE '%' || :query || '%'
+              )
+        )
+      )
+    ORDER BY j.created_at DESC
+    """)
+    fun searchJournalsWithDetailsWithinDateRange(
+        startDate: Long,
+        endDate: Long,
+        query: String
+    ): Flow<List<JournalWithDetails>>
+
 }
 
 

@@ -1,178 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:colorBackground">
+    android:background="@color/category_screen_bg">
 
-    <!-- Toolbar -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/custom_toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:background="?attr/colorSurface"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/category_nav_bg"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <FrameLayout
             android:id="@+id/btn_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="?attr/colorOnSurface" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/text_primary" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:text="@string/add_account"
-            android:textStyle="bold"
+            android:text="@string/manage_category"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
-            android:textColor="?attr/colorOnSurface" />
-    </LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <!-- SAVE BUTTON -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonSave"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/nav_active_text"
+        android:fontFamily="sans-serif-medium"
         android:text="@string/save"
-        android:textStyle="bold"
+        android:textAllCaps="false"
         android:textColor="@color/white"
-        android:backgroundTint="@color/blue"
-        android:layout_margin="16dp"
+        android:textSize="16sp"
+        app:cornerRadius="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-
-    <!-- NestedScrollView -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollWrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
-        android:padding="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="24dp"
         android:scrollbars="none"
-        android:background="?android:colorBackground"
-        app:layout_constraintTop_toBottomOf="@id/custom_toolbar"
         app:layout_constraintBottom_toTopOf="@id/buttonSave"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/custom_toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="90dp">
+            android:orientation="vertical">
 
-            <!-- NAME -->
-            <TextView
-                android:text="@string/name_category"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:layout_marginBottom="4dp"/>
-
-            <EditText
-                android:id="@+id/editTextAccountName"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="@string/enter_name_category"
-                android:paddingHorizontal="14dp"
-                android:textColor="?attr/colorOnSurface"
-                android:textColorHint="@color/text_secondary"
-                android:background="@drawable/input_bg"
-                android:layout_marginBottom="14dp"/>
-
-            <!-- TYPE -->
-            <TextView
-                android:text="@string/type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:layout_marginBottom="4dp"/>
-
-            <Spinner
-                android:id="@+id/autoCompleteTypeAccount"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/input_bg"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:gravity="center_vertical"
-                android:spinnerMode="dropdown"
-                android:layout_marginBottom="14dp"/>
-
-            <!-- ICON -->
-            <TextView
-                android:text="@string/icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:layout_marginBottom="4dp"/>
-
-            <EditText
-                android:id="@+id/searchIcon"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="@string/search"
-                android:drawableStart="@drawable/ic_search"
-                android:paddingHorizontal="14dp"
-                android:textColor="?attr/colorOnSurface"
-                android:textColorHint="@color/text_secondary"
-                android:background="@drawable/input_bg"
-                android:layout_marginBottom="12dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvIcons"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="16dp"/>
+                android:background="@drawable/category_form_card_bg"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="18dp">
 
-            <!-- COLOR -->
-            <TextView
-                android:text="@string/color"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:layout_marginBottom="4dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/name_category"
+                    android:textColor="@color/category_hint"
+                    android:textSize="12sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvColors"
+                <EditText
+                    android:id="@+id/editTextAccountName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/category_input_bg"
+                    android:fontFamily="sans-serif-medium"
+                    android:hint="@string/enter_name_category"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/category_hint"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/type"
+                    android:textColor="@color/category_hint"
+                    android:textSize="12sp" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/autoCompleteTypeAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/category_input_bg"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:spinnerMode="dropdown" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/color"
+                    android:textColor="@color/category_hint"
+                    android:textSize="12sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvColors"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="12dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:layout_marginTop="18dp"
+                android:background="@drawable/category_form_card_bg"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/icon"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/searchIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/category_search_inner_bg"
+                    android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="sans-serif"
+                    android:hint="@string/search_icons_hint"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/category_hint"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvSelectedIconName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/category_selected_icon_badge_bg"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingStart="12dp"
+                    android:paddingTop="7dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="7dp"
+                    android:text="@string/selected_icon"
+                    android:textColor="@color/nav_active_text"
+                    android:textSize="12sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvIcons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingBottom="4dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-
-    <!-- ProgressBar -->
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/buttonSave"
+        app:layout_constraintEnd_toEndOf="@id/buttonSave"
+        app:layout_constraintStart_toStartOf="@id/buttonSave"
+        app:layout_constraintTop_toTopOf="@id/buttonSave" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

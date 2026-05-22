@@ -1,7 +1,5 @@
 package com.babsnet.accounting.adapter
 
-
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.Account
+import com.babsnet.accounting.utils.AccountLocalizationUtil
 
 class CategoryAccountAdapter(
     private val accounts: List<Account>,
@@ -57,7 +57,7 @@ class CategoryAccountAdapter(
     // ================================
     private fun updateUI(holder: ViewHolder, position: Int) {
         val account = accounts[position]
-        holder.name.text = account.accountName
+        holder.name.text = AccountLocalizationUtil.localizeAccountName(holder.itemView.context, account)
 
         val iconResId = holder.itemView.context.resources.getIdentifier(
             account.iconResName, "drawable", holder.itemView.context.packageName
@@ -65,15 +65,17 @@ class CategoryAccountAdapter(
         holder.img.setImageResource(if (iconResId != 0) iconResId else R.drawable.ic_home)
 
 
-        // highlight logic aman Android 14+
+        val selectedText = ContextCompat.getColor(holder.itemView.context, R.color.nav_active_text)
+        val defaultText = ContextCompat.getColor(holder.itemView.context, R.color.text_primary)
+
         if (position == selectedPosition) {
-            holder.layout.setBackgroundResource(R.drawable.category_item_selected)
-            holder.name.setTextColor(Color.WHITE)
-            holder.img.setColorFilter(Color.WHITE)
+            holder.layout.setBackgroundResource(R.drawable.journal_category_card_selected_bg)
+            holder.name.setTextColor(selectedText)
+            holder.img.setColorFilter(selectedText)
         } else {
-            holder.layout.setBackgroundResource(R.drawable.category_item_unselected)
-            holder.name.setTextColor(Color.BLACK)
-            holder.img.setColorFilter(Color.BLACK)
+            holder.layout.setBackgroundResource(R.drawable.journal_category_card_bg)
+            holder.name.setTextColor(defaultText)
+            holder.img.setColorFilter(defaultText)
         }
 
 

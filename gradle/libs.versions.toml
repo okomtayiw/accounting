@@ -1,8 +1,9 @@
 [versions]
 agp = "8.7.3"
-core = "1.47.0"
+core = "1.52.0"
+coreVersion = "1.52.0"
 drawerlayout = "1.2.0"
-googleMaterial = "1.12.0"
+googleMaterial = "1.13.0"
 googleMaterialVersion = "1.12.0"
 itext7Core = "7.1.15"
 jxl = "2.6.12"
@@ -29,6 +30,9 @@ room = "2.6.1"
 supportAnnotations = "28.0.0"
 annotation = "1.9.1"
 viewpager2 = "1.1.0"
+activity = "1.9.2"
+ksp = "1.9.22-1.0.16"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,7 +46,8 @@ androidx-room-ktx-v252 = { module = "androidx.room:room-ktx", version.ref = "roo
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 core = { module = "com.google.ar:core", version.ref = "core" }
 google-material-v1100 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
-itext7-core = { module = "com.itextpdf:itext7-core", version.ref = "itext7Core" }
+itext7-kernel = { module = "com.itextpdf:kernel", version.ref = "itext7Core" }
+itext7-layout = { module = "com.itextpdf:layout", version.ref = "itext7Core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -71,7 +76,10 @@ material-v130 = { module = "com.google.android.material:material", version.ref =
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+
 

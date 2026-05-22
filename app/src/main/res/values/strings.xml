@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">accounting system</string>
+    <string name="app_name">BaCs</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Category</string>
     <string name="title_journal">Journal</string>
@@ -49,5 +49,247 @@
     <string name="date">Date</string>
     <string name="download">Download</string>
     <string name="close_application">Close Application</string>
+    <string name="exit_app_title">Close Application</string>
+    <string name="exit_app_message">Do you want to close the application?</string>
+    <string name="yes">Yes</string>
+    <string name="mingguan">Mingguan</string>
+    <string name="bulanan">Bulanan</string>
+    <string name="tahunan">Tahunan</string>
+    <string name="select_account">Select Account</string>
+    <string name="report">Report</string>
+    <string name="show">Show</string>
+    <string name="select_category">Select Category</string>
+    <string name="close">Close</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 
+    <string name="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
+        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
+        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
+        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
+        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
+        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
+        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
+        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
+        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
+        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
+        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
+        bibendum, vel congue leo egestas.\n\n
+        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
+        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
+        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
+        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
+        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
+        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
+        est.\n\n
+        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
+        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
+        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
+        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
+        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
+        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
+        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
+        convallis.\n\n
+        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
+        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
+        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
+        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
+        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
+        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
+        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
+    </string>
+    <string name="generate_pdf">Generate PDF</string>
+    <string name="account_name">Account Name</string>
+    <string name="assets">Assets</string>
+    <string name="income">Income</string>
+    <string name="transaction_ledger_preview">Transaction Ledger Preview</string>
+    <string name="no">No</string>
+    <string name="number_short">No</string>
+    <string name="account">Account</string>
+    <string name="description">Description</string>
+    <string name="debit">Debit</string>
+    <string name="credit">Credit</string>
+    <string name="preview_laba_rugi">Profit &amp; Loss Preview</string>
+    <string name="total_revenue">Total Revenue: -</string>
+    <string name="total_expenses">Total Expenses: -</string>
+    <string name="net_profit_net_loss">Net Profit / Net Loss: -</string>
+    <string name="total_debit_0">Total Debit: 0</string>
+    <string name="total_credit_0">Total Credit: 0</string>
+    <string name="balance_sheet_preview">Balance Sheet Preview</string>
+    <string name="net_income_loss">Net Income/Loss: -</string>
+    <string name="total_balance_assets">Total Balance (Assets): -</string>
+    <string name="category_preview">Category Preview</string>
+    <string name="total">Total</string>
+    <string name="expenses">Expenses</string>
+    <string name="created_at">Created At</string>
+    <string name="_1734847836781">1734847836781</string>
+    <string name="_1734825600000">1734825600000</string>
+    <string name="kohlən">:</string>
+    <string name="balanced_transaction">Balanced Transaction</string>
+    <string name="account_expense">Account Expense</string>
+    <string name="journal_empty_subtitle">Your recorded transactions will appear here based on the selected period.</string>
+    <string name="search_journal_hint">Search entries...</string>
+    <string name="manage_category">Manage Category</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
+    <string name="all_categories">All Categories</string>
+    <string name="apply">Apply</string>
+    <string name="drawer_version_format">Version %1$s</string>
+    <string name="theme">Theme</string>
+    <string name="currency">Currency</string>
+    <string name="language">Language</string>
+    <string name="choose_theme">Choose Theme</string>
+    <string name="choose_currency">Choose Currency</string>
+    <string name="choose_language">Choose Language</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language_system_default">System Default</string>
+    <string name="language_english">English</string>
+    <string name="language_indonesian">Indonesia</string>
+    <string name="apply_selection">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="report_overview">Overview</string>
+    <string name="report_amount_placeholder">0</string>
+    <string name="report_net_flow">Net Flow</string>
+    <string name="report_headline_default">Ready to review this period</string>
+    <string name="report_subheadline_default">Choose a category and tap Apply to see the transaction summary.</string>
+    <string name="report_income_metric_placeholder">Income: 0</string>
+    <string name="report_expense_metric_placeholder">Expenses: 0</string>
+    <string name="report_total_entries">Total Entries</string>
+    <string name="report_selected_category">Selected Category</string>
+    <string name="report_spotlight">Spotlight</string>
+    <string name="report_spotlight_default_title">No data yet</string>
+    <string name="report_spotlight_default_subtitle">Main insight will appear after the transactions are filtered.</string>
+    <string name="report_top_transactions">Top Transactions</string>
+    <string name="report_top_transactions_hint">Top 3</string>
+    <string name="report_top_transactions_empty">No transactions to display yet.</string>
+    <string name="account_cash">Cash</string>
+    <string name="account_bank">Bank</string>
+    <string name="account_daily_shopping">Daily Shopping</string>
+    <string name="account_rent">Rent</string>
+    <string name="account_electricity_bill">Electricity Bill</string>
+    <string name="account_water_bill">Water Bill</string>
+    <string name="account_internet_phone">Internet &amp; Phone</string>
+    <string name="account_insurance">Insurance</string>
+    <string name="account_vehicle_installment">Vehicle Installment</string>
+    <string name="account_entertainment">Entertainment</string>
+    <string name="account_education">Education</string>
+    <string name="account_income">Income</string>
+    <string name="report_option_ledger">Ledger</string>
+    <string name="report_option_profit_loss">Profit &amp; Loss</string>
+    <string name="report_option_balance_sheet">Balance Sheet</string>
+    <string name="search_categories_hint">Search categories...</string>
+    <string name="search_icons_hint">Search icons...</string>
+    <string name="selected_icon">Selected icon</string>
+    <string name="category_name">Category Name</string>
+    <string name="amount">Amount</string>
+    <string name="amount_zero_hint">0.00</string>
+    <string name="notes">Notes</string>
+    <string name="add_description_hint">Add a description...</string>
+    <string name="entries_count">%1$d entries</string>
+    <string name="entries_label">entries</string>
+    <string name="label_total_type">Total %1$s: %2$s</string>
+    <string name="label_type_amount">%1$s: %2$s</string>
+    <string name="label_total_amount">Total: %1$s</string>
+    <string name="label_total_debit">Total Debit: %1$s</string>
+    <string name="label_total_credit">Total Credit: %1$s</string>
+    <string name="label_total_balance">Total Balance (%1$s): %2$s</string>
+    <string name="label_net_income_loss">Net Income / Loss: %1$s</string>
+    <string name="label_net_profit_loss">Net Profit / Net Loss: %1$s</string>
+    <string name="loading">Loading...</string>
+    <string name="summary">Summary</string>
+    <string name="wallet">Wallet</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="sign_in_with">Sign in with</string>
+    <string name="enter_phone_number">Enter your phone number</string>
+    <string name="app_tagline">Simple finance workspace</string>
+    <string name="toast_account_in_use">The account cannot be deleted because it is already used for transaction data</string>
+    <string name="toast_account_deleted">Account deleted: %1$s</string>
+    <string name="toast_account_added">Account added successfully</string>
+    <string name="toast_account_updated">Account updated successfully</string>
+    <string name="toast_journal_saved">Journal saved successfully</string>
+    <string name="toast_empty_transactions">There is no transaction data.</string>
+    <string name="toast_empty_report_data">Data is still empty</string>
+    <string name="toast_select_period">Please select period</string>
+    <string name="validation_all_fields_required">All fields are required</string>
+    <string name="validation_category_required">Category must be selected</string>
+    <string name="validation_account_name_empty">Account name cannot be empty</string>
+    <string name="validation_select_icon">Please select an icon</string>
+    <string name="validation_select_color">Please select a color</string>
+    <string name="download_success_title">File saved successfully</string>
+    <string name="download_success_message">The %1$s document has been created successfully.\n\nFile name: %2$s\nLocation: %3$s\n\nOpen the Download folder to view or share the file.</string>
+    <string name="download_location_downloads">Download Folder</string>
+    <string name="share">Share</string>
+    <string name="view_file">View File</string>
+    <string name="share_file_chooser">Share file</string>
+    <string name="error_file_not_found_share">File not found for sharing</string>
+    <string name="error_file_not_found_open">File not found for opening</string>
+    <string name="error_no_viewer_app">No application available to open the file</string>
+    <string name="error_create_download_file">Failed to create file in Downloads</string>
+    <string name="error_open_output_stream">Failed to open output stream</string>
+    <string name="delete_confirmation">Delete Confirmation</string>
+    <string name="delete_confirmation_message">Are you sure you want to delete this data?</string>
+    <string name="failed_create_excel">Failed to create Excel: %1$s</string>
+    <string name="failed_create_csv">Failed to create CSV: %1$s</string>
+    <string name="failed_create_pdf">Failed to create PDF: %1$s</string>
+    <string name="error_prefix">Error: %1$s</string>
+    <string name="balance_sheet_title_pdf">Balance Sheet</string>
+    <string name="balance_sheet_period">Period: %1$s</string>
+    <string name="generated_at">Generated at %1$s</string>
+    <string name="main_summary">Main Summary</string>
+    <string name="total_assets">Total Assets</string>
+    <string name="net_profit_loss">Net Profit / Loss</string>
+    <string name="total_expense">Total Expenses</string>
+    <string name="balance_total">Balance Total</string>
+    <string name="account_breakdown">Account Breakdown</string>
+    <string name="all_periods">All periods</string>
+    <string name="account_category_label">Category %1$s</string>
+    <string name="negative_balance_note">Note: negative numbers indicate a decrease in the related account balance.</string>
+    <string name="journal_report_title">Journal Report</string>
+    <string name="journal_report_category">Category: %1$s</string>
+    <string name="export_sheet_transactions">Transactions</string>
+    <string name="file_label_excel">Excel</string>
+    <string name="file_label_csv">CSV</string>
+    <string name="file_label_profit_loss_pdf">Profit &amp; Loss PDF</string>
+    <string name="file_label_balance_sheet_pdf">Balance Sheet PDF</string>
+    <string name="report_spotlight_meta_clean">%1$d entries - %2$s - biggest contribution in this period</string>
+    <string name="report_top_transaction_meta">%1$d entries - %2$s</string>
+    <string name="report_cashflow_positive">Cash flow is still healthy</string>
+    <string name="report_cashflow_negative">Spending is higher</string>
+    <string name="report_cashflow_positive_sub">Income this period is still higher than expenses.</string>
+    <string name="report_cashflow_negative_sub">Need more attention on the main expenses in the selected period.</string>
+    <string name="report_spotlight_meta">%1$d entries • %2$s • biggest contribution in this period</string>
+
+    <string name="icon_house">House</string>
+    <string name="icon_eat_drink">Eat &amp; Drink</string>
+    <string name="icon_shopping">Shopping</string>
+    <string name="icon_gasoline">Gasoline</string>
+    <string name="icon_market">Market</string>
+    <string name="icon_electricity">Electricity</string>
+    <string name="icon_phone_load">Phone Load</string>
+    <string name="icon_school">School</string>
+    <string name="icon_credit_card">Credit Card</string>
+    <string name="icon_revenue">Revenue</string>
+    <string name="icon_insurance_name">Insurance</string>
+    <string name="icon_bank_name">Bank</string>
+    <string name="icon_entertainment_name">Entertainment</string>
+    <string name="icon_wallet_name">Wallet</string>
+    <string name="icon_credit_name">Credit</string>
+    <string name="icon_invoice_name">Invoice</string>
+    <string name="icon_category_general">General</string>
+    <string name="icon_category_food">Food</string>
+    <string name="icon_category_shopping">Shopping</string>
+    <string name="icon_category_transport">Transport</string>
+    <string name="icon_category_bills">Bills</string>
+    <string name="icon_category_education">Education</string>
+    <string name="icon_category_finance">Finance</string>
+    <string name="icon_category_entertainment">Entertainment</string>
+    <string name="icon_category_wallet">Wallet</string>
+    <string name="icon_category_credit">Credit</string>
+    <string name="icon_category_invoice">Invoice</string>
 </resources>

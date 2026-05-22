@@ -8,10 +8,21 @@ import com.babsnet.accounting.repository.JournalRepository
 
 class TransactionsViewModel(private val repository: JournalRepository) : ViewModel() {
 
-    val allTransactions: LiveData<List<TransactionData>> = repository.getAllTransactions().asLiveData()
+    private var _transactions: LiveData<List<TransactionData>> =
+        repository.getAllTransactions().asLiveData()
+    val transactions: LiveData<List<TransactionData>> get() = _transactions
 
+    private var lastStart: Long? = null
+    private var lastEnd: Long? = null
+    private var lastAccountId: Int? = null
 
     fun getTransactionData(startDate: Long, endDate: Long, accountId: Int?): LiveData<List<TransactionData>> {
-        return repository.getTransactionsByAccount(startDate, endDate, accountId).asLiveData()
+        if (startDate != lastStart || endDate != lastEnd || accountId != lastAccountId) {
+            _transactions = repository.getTransactionsByAccount(startDate, endDate, accountId).asLiveData()
+            lastStart = startDate
+            lastEnd = endDate
+            lastAccountId = accountId
+        }
+        return _transactions
     }
 }

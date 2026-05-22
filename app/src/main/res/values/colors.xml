@@ -6,15 +6,15 @@
     <color name="teal_200">#B9D8FF</color>
 
 
-
-    <color name="blue">#007AFF</color>
+    <color name="green">#338035</color>
+    <color name="blue">#0075FF</color>
     <color name="blue_pressed">#0065D1</color>
 
     <!-- Soft blue background (selected category background border) -->
     <color name="blue_secondary">#B9D8FF</color>
 
     <!-- Backgrounds -->
-    <color name="window_bg">#F2F3F8</color>     <!-- full screen background -->
+    <color name="window_bg">#F7F8FC</color>     <!-- full screen background -->
     <color name="surface_card">#FFFFFF</color>  <!-- white card -->
     <color name="soft_surface">#F7F7FB</color>  <!-- input fields -->
 
@@ -32,12 +32,76 @@
     <!-- Old palette kept but corrected -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="calendar_icon_tint">#000000</color>
 
     <color name="input_bg_light">#F1F1F1</color>
     <color name="input_stroke_light">#DDDDDD</color>
 
     <color name="tab_text_selected">#FFFFFF</color>
     <color name="tab_text_unselected">#000000</color>
+    <color name="journal_header_start">#F7F8FC</color>
+    <color name="journal_header_end">#F7F8FC</color>
+    <color name="journal_tab_surface">#FFFFFF</color>
+    <color name="journal_card_border">#ECEEF5</color>
+    <color name="journal_badge_bg">#F3F1F8</color>
+    <color name="journal_badge_text">#A0A5B4</color>
+    <color name="journal_income_bg">#F4F2FD</color>
+    <color name="journal_income_text">#7D77EA</color>
+    <color name="journal_expense_bg">#FFF1EA</color>
+    <color name="journal_expense_text">#F07261</color>
+    <color name="journal_neutral_bg">#F4F2F8</color>
+    <color name="journal_neutral_text">#A7A1AE</color>
+    <color name="journal_accent">#5A4FF3</color>
+    <color name="journal_accent_soft">#EAE7FF</color>
+    <color name="journal_search_bg">#FCFCFE</color>
+    <color name="journal_search_hint">#C3C6D1</color>
+    <color name="journal_shadow">#120F172A</color>
+    <color name="journal_tab_text_idle">#A9AEBB</color>
+    <color name="journal_card_bg">#FFFFFF</color>
+    <color name="journal_card_secondary">#FBFBFD</color>
+    <color name="journal_title_text">#2A2B32</color>
+    <color name="journal_subtle_text">#8F94A3</color>
+    <color name="journal_avatar_bg">#F2DFC9</color>
+    <color name="nav_active_bg">#E9E5FF</color>
+    <color name="nav_active_text">#5A4FF3</color>
+    <color name="nav_inactive_text">#7F8798</color>
+    <color name="category_screen_bg">#F5F7FD</color>
+    <color name="category_top_band">#F0EEFF</color>
+    <color name="category_hint">#B9BFCC</color>
+    <color name="category_divider">#ECEEF6</color>
+    <color name="category_card_stroke">#F1F4FA</color>
+    <color name="category_chevron">#CDD2E0</color>
+    <color name="category_search_stroke">#EEF1F7</color>
+    <color name="category_nav_bg">#FFFFFF</color>
+    <color name="category_input_fill">#F4F6FC</color>
+    <color name="surface_elevated">#FCFDFF</color>
+    <color name="surface_stroke">#E9EDF7</color>
+    <color name="soft_accent_surface">#F0EDFF</color>
+    <color name="report_segment_surface">#F4F6FC</color>
+    <color name="journal_form_screen_surface">#F7F8FC</color>
+    <color name="journal_form_toolbar_surface">#FFFFFF</color>
+    <color name="journal_form_toolbar_stroke">#EEF0F6</color>
+    <color name="journal_form_panel_surface">#FFFFFF</color>
+    <color name="journal_form_panel_stroke">#EEF1F6</color>
+    <color name="journal_form_field_surface">#FFFFFF</color>
+    <color name="journal_form_field_stroke">#AEB8C7</color>
+    <color name="journal_form_segment_surface">#FFFFFF</color>
+    <color name="journal_form_tab_active">#1E78F0</color>
+    <color name="journal_form_label">#9EABBE</color>
+    <color name="journal_form_text">#55657C</color>
+    <color name="journal_form_hint">#D0D8E4</color>
+    <color name="journal_form_icon_tint">#A6B4C8</color>
+    <color name="drawer_surface">#FCFDFF</color>
+    <color name="drawer_header_start">#F5F3FF</color>
+    <color name="drawer_header_end">#EEF3FF</color>
+    <color name="drawer_stroke">#E8ECF6</color>
+    <color name="drawer_text_secondary">#7C8597</color>
+    <color name="drawer_item_bg">#F3F5FB</color>
+    <color name="loading_overlay">#66FFFFFF</color>
+    <color name="warning_surface">#FFFFFF</color>
+    <color name="warning_stroke">#E8ECF6</color>
+    <color name="warning_icon_bg">#FFF2F1</color>
+    <color name="warning_icon_tint">#F07261</color>
 
 
 </resources>

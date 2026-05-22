@@ -42,7 +42,6 @@
         <item name="android:navigationBarColor">@color/white</item>
 
 
-
         <!-- ===== TYPOGRAPHY ===== -->
         <item name="fontFamily">@font/accounting_font</item>
 
@@ -52,6 +51,11 @@
 
         <item name="tabUnselectedTextColor">@color/black</item>
 
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.AccountingSystem" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
 </resources>

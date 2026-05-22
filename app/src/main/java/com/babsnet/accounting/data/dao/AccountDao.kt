@@ -38,5 +38,8 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(accounts: List<Account>)
 
+    @Query("SELECT * FROM account")
+    suspend fun getAllAccountsSnapshot(): List<Account>
+
 
 }

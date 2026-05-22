@@ -2,18 +2,25 @@ package com.babsnet.accounting.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.AttrRes
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.babsnet.accounting.R
 import com.babsnet.accounting.data.entity.JournalWithDetails
 import com.babsnet.accounting.databinding.ItemJournalBinding
+import com.babsnet.accounting.utils.AccountLocalizationUtil
+import com.babsnet.accounting.utils.CurrencyFormatUtil
 import com.babsnet.accounting.utils.DateUtil
-import com.babsnet.accounting.utils.Utils
+import java.util.Locale
+
 
 class JournalWithDetailsAdapter(
     private val onDeleteJournal: (JournalWithDetails) -> Unit,
@@ -42,28 +49,67 @@ class JournalWithDetailsAdapter(
         fun bind(journalWithDetails: JournalWithDetails) {
             val journal = journalWithDetails.journal
             val dateString = DateUtil.formatDateFromDateObject(journal.date!!)
-            binding.textDate.text = DateUtil.formatDate(dateString)
+            binding.textDate.text = DateUtil.formatDate(dateString).uppercase(Locale.getDefault())
             binding.textDescription.text = journal.description
             binding.textCreatedAt.text = DateUtil.formatDate(journal.createdAt.toString())
-
-            val firstLedger = journalWithDetails.ledgers[0]
-            val valueAmountOne = if (firstLedger.ledgerCredit == 0.0) {
-                firstLedger.ledgerDebit
-            } else {
-                firstLedger.ledgerCredit
-            }
-
-            val firstLedgerTwo = journalWithDetails.ledgers[1]
-            val valueAmountTwo = if (firstLedgerTwo.ledgerDebit == 0.0) {
-                firstLedgerTwo.ledgerCredit
-            } else {
-                firstLedgerTwo.ledgerDebit
-            }
-
-            binding.textAccountNameOne.text = "${journalWithDetails.ledgers[0].accountName} (${Utils.formatAmount(valueAmountOne)})"
-            binding.textAccountNameTwo.text =  "${journalWithDetails.ledgers[1].accountName} (${Utils.formatAmount(valueAmountTwo)})"
-
+            binding.labelDate.text = journal.description
             val context = binding.root.context
+            if (journalWithDetails.ledgers.isNotEmpty()) {
+                val l1 = journalWithDetails.ledgers[0]
+                val l2 = journalWithDetails.ledgers.getOrNull(1)
+                val valueAmountOne = if (l1.ledgerCredit == 0.0) {
+                    l1.ledgerDebit
+                } else {
+                    l1.ledgerCredit
+                }
+
+                val valueAmountTwo = if ((l2?.ledgerDebit ?: 0.0) == 0.0) {
+                    l2?.ledgerCredit ?: 0.0
+                } else {
+                    l2?.ledgerDebit ?: 0.0
+                }
+                binding.textAccountNameOne.text =
+                    "${AccountLocalizationUtil.localizeAccountName(context, l1.accountName)} (${CurrencyFormatUtil.formatCurrency(context, valueAmountOne)})"
+                binding.textAccountNameTwo.text = if (l2 != null) {
+                    "${AccountLocalizationUtil.localizeAccountName(context, l2.accountName)} (${CurrencyFormatUtil.formatCurrency(context, valueAmountTwo)})"
+                } else {
+                    "-"
+                }
+
+                val defaultBg = ContextCompat.getColor(context, R.color.journal_card_bg)
+                val incomeBg = ContextCompat.getColor(context, R.color.journal_income_bg)
+                val incomeText = ContextCompat.getColor(context, R.color.journal_income_text)
+                val expenseBg = ContextCompat.getColor(context, R.color.journal_expense_bg)
+                val expenseText = ContextCompat.getColor(context, R.color.journal_expense_text)
+                val titleText = ContextCompat.getColor(context, R.color.journal_title_text)
+                val subtleText = ContextCompat.getColor(context, R.color.journal_subtle_text)
+
+                binding.cardListJournal.setCardBackgroundColor(defaultBg)
+                binding.textDescription.setTextColor(titleText)
+                binding.labelDate.setTextColor(subtleText)
+                binding.textCreatedAt.setTextColor(subtleText)
+                binding.labelCreatedAt.setTextColor(subtleText)
+
+                val hasIncome = listOfNotNull(l1, l2).any {
+                    it.accountType.equals("Income", true)
+                }
+
+                if (hasIncome) {
+                    binding.labelAccountNameOne.text = AccountLocalizationUtil.localizeAccountType(context, "Expenses")
+                    binding.labelAccountNameTwo.text = AccountLocalizationUtil.localizeAccountType(context, "Assets")
+                    binding.labelAccountNameOne.backgroundTintList = ColorStateList.valueOf(expenseBg)
+                    binding.labelAccountNameOne.setTextColor(expenseText)
+                    binding.labelAccountNameTwo.backgroundTintList = ColorStateList.valueOf(incomeBg)
+                    binding.labelAccountNameTwo.setTextColor(incomeText)
+                } else {
+                    binding.labelAccountNameOne.text = AccountLocalizationUtil.localizeAccountType(context, "Expenses")
+                    binding.labelAccountNameTwo.text = AccountLocalizationUtil.localizeAccountType(context, "Assets")
+                    binding.labelAccountNameOne.backgroundTintList = ColorStateList.valueOf(expenseBg)
+                    binding.labelAccountNameOne.setTextColor(expenseText)
+                    binding.labelAccountNameTwo.backgroundTintList = ColorStateList.valueOf(incomeBg)
+                    binding.labelAccountNameTwo.setTextColor(incomeText)
+                }
+            }
 
             binding.menuButton.setOnClickListener {
                 showPopupMenu(it, context, journalWithDetails)
@@ -93,8 +139,17 @@ class JournalWithDetailsAdapter(
             }
             popup.show()
         }
-    }
 
+        fun Context.themeColor(@AttrRes attr: Int): Int {
+            val tv = TypedValue()
+            theme.resolveAttribute(attr, tv, true)
+            return if (tv.resourceId != 0) {
+                ContextCompat.getColor(this, tv.resourceId)
+            } else {
+                tv.data
+            }
+        }
+    }
 
     class JournalWithDetailsComparator : DiffUtil.ItemCallback<JournalWithDetails>() {
         override fun areItemsTheSame(oldItem: JournalWithDetails, newItem: JournalWithDetails): Boolean {

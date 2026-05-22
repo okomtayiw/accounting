@@ -1,7 +1,18 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+    id "com.google.devtools.ksp"
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+static def generateVersionCode() {
+    return (System.currentTimeMillis() / 1000).toInteger()
 }
 
 android {
@@ -10,21 +21,52 @@ android {
 
     defaultConfig {
         applicationId = "com.babsnet.accounting"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 35
-        versionCode = 1
+        versionCode = generateVersionCode()
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+
+    flavorDimensions "env"
+    productFlavors {
+        dev {
+            dimension "env"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+            resValue "string", "app_name", "BaCs DEV"
+            // buildConfigField "String", "BASE_URL", "\"https://dev.api.com\""
+        }
+
+        prod {
+            dimension "env"
+            resValue "string", "app_name", "BaCs"
+            // buildConfigField "String", "BASE_URL", "\"https://api.com\""
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile rootProject.file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
     }
 
     buildTypes {
         debug {
-            debuggable = true
+            debuggable true
         }
+
         release {
-            minifyEnabled = false
-            proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -38,7 +80,18 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        viewBinding true
+    }
+
+    packaging {
+        resources {
+            excludes += [
+                    "/META-INF/{AL2.0,LGPL2.1}",
+                    "/META-INF/LICENSE*",
+                    "/META-INF/NOTICE*",
+                    "/META-INF/DEPENDENCIES"
+            ]
+        }
     }
 
     java {
@@ -49,60 +102,36 @@ android {
 }
 
 dependencies {
-    // AndroidX core libraries
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.androidx.constraintlayout
 
-    // Material Design Components
-    implementation libs.material // From version catalog
-    implementation libs.material.v1100 // Ensure no duplicate versions
+    implementation libs.material
 
-    // Lifecycle components
     implementation libs.androidx.lifecycle.livedata.ktx
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    // Navigation Components
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx
-    implementation libs.androidx.navigation.fragment.ktx.v260
-    implementation libs.androidx.navigation.ui.ktx.v260
-    implementation libs.material
 
     implementation libs.androidx.drawerlayout
-    implementation libs.google.material.v1100
 
-
-    // Vector drawable support
     implementation libs.androidx.vectordrawable
 
-    //sqlite
     implementation libs.androidx.room.ktx
     implementation libs.androidx.room.runtime
-    implementation libs.support.annotations
     implementation libs.androidx.annotation
-    //noinspection KaptUsageInsteadOfKsp
-    kapt libs.androidx.room.compiler
+    implementation libs.androidx.activity
+    ksp libs.androidx.room.compiler
 
-    //convert pdf
-    implementation libs.itext7.core
-    //excel
+    implementation libs.itext7.kernel
+    implementation libs.itext7.layout
     implementation libs.jxl
 
     implementation libs.androidx.viewpager2
-    implementation libs.material.v130
 
     implementation libs.shimmer
 
-
-
-
-    implementation libs.androidx.room.ktx.v252
-
-    // ARCore
-    implementation(libs.core)
-
-    // Unit Testing
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core

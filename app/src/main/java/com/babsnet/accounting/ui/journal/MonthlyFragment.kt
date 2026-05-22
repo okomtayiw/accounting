@@ -13,11 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.JournalWithDetailsAdapter
-import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.databinding.FragmentMonthlyBinding
-import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.DateUtil
-import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.JournalViewModel
 import java.time.LocalDate
@@ -36,6 +33,7 @@ class MonthlyFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -45,13 +43,7 @@ class MonthlyFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val db = AppDatabase.getDatabase(requireContext())
-        val repo = JournalRepository(db.journalDao(), db.ledgerDao())
-
-        journalViewModel = ViewModelProvider(
-            this,
-            GenericViewModelFactory(JournalViewModel::class.java) { JournalViewModel(repo) }
-        )[JournalViewModel::class.java]
+        journalViewModel = ViewModelProvider(requireActivity())[JournalViewModel::class.java]
     }
 
     private fun setupRecycler() {
@@ -67,7 +59,7 @@ class MonthlyFragment : Fragment() {
         val today = LocalDate.now()
         val (y, m) = DateUtil.getStartAndEndOfMonth(today.year, today.monthValue)
 
-        journalViewModel.getJournalsForMonth(y, m).observe(viewLifecycleOwner) {
+        journalViewModel.searchByRange(y, m).observe(viewLifecycleOwner) {
             adapter.submitList(it)
             showEmptyState(it.isEmpty())
         }

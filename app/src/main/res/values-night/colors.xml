@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <color name="purple_500">#1073F5</color>
     <color name="purple_700">#0065D1</color>
@@ -7,6 +7,7 @@
 
 
     <!-- Primary Blue (same tone but darker contrast for night) -->
+    <color name="green">#338035</color>
     <color name="blue">#0A84FF</color>
     <color name="blue_pressed">#0065D1</color>
 
@@ -32,11 +33,62 @@
     <!-- Basics -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="calendar_icon_tint">#FFFFFF</color>
 
-    <color name="input_bg_dark">#1E1E1E</color>
-    <color name="input_stroke_dark">#333333</color>
+    <color name="input_bg_dark" tools:ignore="MissingDefaultResource">#1E1E1E</color>
+    <color name="input_stroke_dark" tools:ignore="MissingDefaultResource">#333333</color>
 
     <color name="tab_text_selected">#FFFFFF</color>
     <color name="tab_text_unselected">#FFFFFF</color>
+    <color name="journal_header_start">#16171B</color>
+    <color name="journal_header_end">#111216</color>
+    <color name="journal_tab_surface">#23252B</color>
+    <color name="journal_card_border">#2A2D35</color>
+    <color name="journal_badge_bg">#23262D</color>
+    <color name="journal_badge_text">#8E95A3</color>
+    <color name="journal_income_bg">#1C2331</color>
+    <color name="journal_income_text">#8FA8FF</color>
+    <color name="journal_expense_bg">#2B221E</color>
+    <color name="journal_expense_text">#FFB08C</color>
+    <color name="journal_neutral_bg">#22242A</color>
+    <color name="journal_neutral_text">#8D93A1</color>
+    <color name="journal_accent">#5A4FF3</color>
+    <color name="journal_accent_soft">#2A244D</color>
+    <color name="journal_search_bg">#181A1F</color>
+    <color name="journal_search_hint">#70788B</color>
+    <color name="journal_shadow">#40000000</color>
+    <color name="journal_tab_text_idle">#969EAE</color>
+    <color name="journal_card_bg">#17191E</color>
+    <color name="journal_card_secondary">#1B1D23</color>
+    <color name="journal_title_text">#F5F7FB</color>
+    <color name="journal_subtle_text">#8F97A8</color>
+    <color name="journal_avatar_bg">#2A2831</color>
+    <color name="nav_active_bg">#262047</color>
+    <color name="nav_active_text">#8E83FF</color>
+    <color name="nav_inactive_text">#8891A3</color>
+    <color name="category_screen_bg">#111216</color>
+    <color name="category_top_band">#161820</color>
+    <color name="category_hint">#798195</color>
+    <color name="category_divider">#262932</color>
+    <color name="category_card_stroke">#262932</color>
+    <color name="category_chevron">#5F6778</color>
+    <color name="category_search_stroke">#262932</color>
+    <color name="category_nav_bg">#15171C</color>
+    <color name="category_input_fill">#1B1D23</color>
+    <color name="surface_elevated">#17191E</color>
+    <color name="surface_stroke">#262932</color>
+    <color name="soft_accent_surface">#262047</color>
+    <color name="report_segment_surface">#1B1D23</color>
+    <color name="drawer_surface">#17191E</color>
+    <color name="drawer_header_start">#201D33</color>
+    <color name="drawer_header_end">#1A2130</color>
+    <color name="drawer_stroke">#262932</color>
+    <color name="drawer_text_secondary">#8E97A9</color>
+    <color name="drawer_item_bg">#1D2027</color>
+    <color name="loading_overlay">#4D0F1116</color>
+    <color name="warning_surface">#1B1D23</color>
+    <color name="warning_stroke">#2A2D35</color>
+    <color name="warning_icon_bg">#2B221E</color>
+    <color name="warning_icon_tint">#FFB08C</color>
 
 </resources>

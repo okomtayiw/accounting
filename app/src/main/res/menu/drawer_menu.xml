@@ -2,6 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/nav_theme"
+        android:title="@string/theme"
+        android:icon="@drawable/ic_stars" />
+
+    <item
+        android:id="@+id/nav_currency"
+        android:title="@string/currency"
+        android:icon="@drawable/ic_wallet" />
+
+    <item
+        android:id="@+id/nav_language"
+        android:title="@string/language"
+        android:icon="@drawable/ic_menu" />
+
+    <item
         android:id="@+id/nav_logout"
         android:title="@string/close_application"
         android:icon="@drawable/ic_logout" />

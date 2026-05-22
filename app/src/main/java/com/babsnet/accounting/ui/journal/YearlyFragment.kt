@@ -12,11 +12,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.babsnet.accounting.R
 import com.babsnet.accounting.adapter.JournalWithDetailsAdapter
-import com.babsnet.accounting.data.AppDatabase
 import com.babsnet.accounting.databinding.FragmentYearlyBinding
-import com.babsnet.accounting.repository.JournalRepository
 import com.babsnet.accounting.utils.DateUtil
-import com.babsnet.accounting.utils.GenericViewModelFactory
 import com.babsnet.accounting.utils.Utils
 import com.babsnet.accounting.viewModel.JournalViewModel
 import java.time.LocalDate
@@ -64,13 +61,7 @@ class YearlyFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        val db = AppDatabase.getDatabase(requireContext())
-        val repo = JournalRepository(db.journalDao(), db.ledgerDao())
-
-        journalViewModel = ViewModelProvider(
-            this,
-            GenericViewModelFactory(JournalViewModel::class.java) { JournalViewModel(repo) }
-        )[JournalViewModel::class.java]
+        journalViewModel = ViewModelProvider(requireActivity())[JournalViewModel::class.java]
     }
 
     private fun setupRecycler() {
@@ -90,7 +81,7 @@ class YearlyFragment : Fragment() {
         val currentYear = LocalDate.now().year
         val (start, end) = DateUtil.getStartAndEndOfYear(currentYear)
 
-        journalViewModel.getJournalsForYear(start, end).observe(viewLifecycleOwner) {
+        journalViewModel.searchByRange(start, end).observe(viewLifecycleOwner) {
             adapter.submitList(it)
             showEmptyState(it.isEmpty())
         }

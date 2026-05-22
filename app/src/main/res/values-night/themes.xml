@@ -9,18 +9,18 @@
         <item name="colorOnPrimary">@color/white</item>
 
         <!-- ===== BACKGROUND ===== -->
-        <item name="android:colorBackground">#0D0D0D</item>
-        <item name="android:windowBackground">#0D0D0D</item>
-        <item name="colorOnBackground">#FFFFFF</item>
+        <item name="android:colorBackground">@color/category_screen_bg</item>
+        <item name="android:windowBackground">@color/category_screen_bg</item>
+        <item name="colorOnBackground">@color/text_primary</item>
 
         <!-- ===== SURFACE ===== -->
-        <item name="colorSurface">#1A1A1A</item>
-        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
 
         <!-- ===== STATUS BAR (FIX API 34) ===== -->
         <!-- Opaque black background, ikon terang -->
         <item name="android:statusBarColor">#000000</item>
-        <item name="android:windowLightStatusBar" >false</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowTranslucentStatus">false</item>
@@ -39,6 +39,11 @@
         <item name="colorInputStroke">@color/input_stroke_dark</item>
 
         <item name="tabUnselectedTextColor">@color/white</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.AccountingSystem" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 
 </resources>

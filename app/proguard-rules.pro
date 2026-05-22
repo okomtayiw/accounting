@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# iText pulls in slf4j-api for logging, but Android app releases do not need
+# an slf4j binding implementation.
+-dontwarn org.slf4j.impl.StaticLoggerBinder

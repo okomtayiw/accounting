@@ -42,7 +42,11 @@ class LoginFragment : Fragment() {
             if (phoneNumber.isNotEmpty()) {
 //                findNavController().navigate(R.id.action_loginFragment_to_home)
             } else {
-                Toast.makeText(requireContext(), "Enter your phone number", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.enter_phone_number),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

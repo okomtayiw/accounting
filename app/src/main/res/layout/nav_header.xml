@@ -1,52 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="18dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/drawer_header_bg"
     android:orientation="vertical"
-    android:background="?android:windowBackground"
-    android:padding="16dp"
-    android:elevation="8dp"
-    android:layout_margin="2dp"
-    android:clipToPadding="false"
-    android:clipChildren="false"
+    android:padding="18dp"
     tools:ignore="HardcodedText">
 
-    <!-- Profile Image -->
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="64dp"
-        android:visibility="gone"
-        android:layout_height="64dp"
-        android:src="@drawable/ic_profile"
-        android:contentDescription="Profile Picture"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="8dp"
-        app:tint="?attr/colorOnSurface" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/category_selected_icon_badge_bg"
+        android:fontFamily="sans-serif-medium"
+        android:paddingStart="10dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="6dp"
+        android:text="BaCs"
+        android:textColor="@color/nav_active_text"
+        android:textSize="12sp" />
 
-    <!-- User Name -->
     <TextView
         android:id="@+id/profile_name"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
-        android:text="Sandra Adams"
-        android:textSize="18sp"
-        android:textColor="?attr/colorOnSurface"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_marginTop="14dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/app_name"
+        android:textColor="@color/text_primary"
+        android:textSize="22sp" />
 
-    <!-- User Email -->
     <TextView
         android:id="@+id/profile_email"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="sandra_a88@gmail.com"
-        android:textSize="14sp"
-        android:textColor="?attr/colorOnSurface"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_marginTop="6dp"
+        android:text="@string/app_tagline"
+        android:textColor="@color/drawer_text_secondary"
+        android:textSize="13sp" />
 </LinearLayout>

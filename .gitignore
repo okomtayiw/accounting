@@ -1,5 +1,6 @@
 # IDE
 .idea/
+.vscode/
 *.iml
 
 # Gradle
@@ -25,9 +26,22 @@ node_modules/
 app/build/
 build/
 
+# APK & AAB hasil build
+app/release/
+release/
+*.apk
+*.aab
+output-metadata.json
+
+
 # Keystore Files
 *.jks
 *.keystore
+
+keystore/
+keystore.properties
+
+
 
 # Crashlytics and Fabric
 com_crashlytics_build_id.xml
